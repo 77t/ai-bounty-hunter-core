@@ -30,9 +30,8 @@ jobs:
           sleep 5
           ollama pull qwen2.5:7b-instruct-q4_K_M
 
-      - name: Run AI Super Hunter Script
+      - name: Run Unified Agent System
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-        run: python main_scraper.py
-        
+        run: python main.py
