@@ -2,9 +2,8 @@ name: AI Bounty Hunter - Auto Scan
 
 on:
   schedule:
-    # Jalankan setiap 15 menit (Waktu UTC)
     - cron: '*/15 * * * *'
-  workflow_dispatch: # Memungkinkan Anda menjalankan manual kapan saja
+  workflow_dispatch:
 
 jobs:
   hunt:
@@ -13,24 +12,46 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          # Pastikan checkout dilakukan ke root direktori
+          path: '.'
 
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - name: Debug & Install Dependencies
+      - name: Debug Environment & Find Files
         run: |
-          echo "=== Current Directory ==="
+          echo "=== WORKSPACE STRUCTURE ==="
           pwd
-          echo "=== List All Files (Recursive) ==="
-          find . -type f
-          echo "=== Installing Requirements ==="
-          REQ_FILE=$(find . -name "requirements.txt" -type f | head -n 1)
+          echo "--- Root Directory ---"
+          ls -la
+          echo "--- All Files (Recursive) ---"
+          find . -type f -name "*.py" -o -name "*.txt" -o -name "*.yml" -o -name "*.yaml" | sort
+          
+          echo "=== SEARCHING FOR REQUIREMENTS.TXT ==="
+          REQ_FILE=$(find . -iname "requirements.txt" -type f | head -n 1)
           if [ -z "$REQ_FILE" ]; then
-            echo "ERROR: requirements.txt not found!"
+            echo "FATAL ERROR: requirements.txt NOT FOUND anywhere!"
             exit 1
+          else
+            echo "Found requirements.txt at: $REQ_FILE"
           fi
+          
+          echo "=== SEARCHING FOR MAIN_SCRAPER.PY ==="
+          SCRIPT_FILE=$(find . -iname "main_scraper.py" -type f | head -n 1)
+          if [ -z "$SCRIPT_FILE" ]; then
+            echo "FATAL ERROR: main_scraper.py NOT FOUND anywhere!"
+            exit 1
+          else
+            echo "Found main_scraper.py at: $SCRIPT_FILE"
+          fi
+
+      - name: Install Dependencies
+        run: |
+          REQ_FILE=$(find . -iname "requirements.txt" -type f | head -n 1)
+          echo "Installing from: $REQ_FILE"
           pip install -r "$REQ_FILE"
 
       - name: Run Bounty Hunter Script
@@ -38,11 +59,6 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: |
-          echo "=== Finding main_scraper.py ==="
-          SCRIPT_PATH=$(find . -name "main_scraper.py" -type f | head -n 1)
-          if [ -z "$SCRIPT_PATH" ]; then
-            echo "ERROR: main_scraper.py not found!"
-            exit 1
-          fi
-          echo "Running script from: $SCRIPT_PATH"
-          python "$SCRIPT_PATH"
+          SCRIPT_FILE=$(find . -iname "main_scraper.py" -type f | head -n 1)
+          echo "Running script from: $SCRIPT_FILE"
+          python "$SCRIPT_FILE"
