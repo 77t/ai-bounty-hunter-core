@@ -12,36 +12,41 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          # Tambahkan ini untuk memastikan semua file ter-checkout dengan benar
-          fetch-depth: 0 
 
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - name: Debug & Run Script
+      - name: Fix & Run Script
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: |
           echo "=== DEBUG START ==="
           pwd
-          ls -la
           
-          # Cek manual apakah file ada
-          if [ -f "./main_scraper.py" ]; then
-            echo "SUCCESS: main_scraper.py found at root!"
-            
-            echo "=== Installing Dependencies ==="
-            pip install -r requirements.txt
-            
-            echo "=== Running Script ==="
-            python main_scraper.py
-          else
-            echo "FATAL: File still missing even after ls showed it."
-            echo "Trying to list all .py files recursively:"
-            find . -name "*.py"
+          # 1. Cari file .py apapun di root
+          ORIGINAL_FILE=$(ls *.py 2>/dev/null | head -n 1)
+          
+          if [ -z "$ORIGINAL_FILE" ]; then
+            echo "FATAL: No .py files found!"
             exit 1
           fi
+          
+          echo "Original file found: $ORIGINAL_FILE"
+          
+          # 2. BUAT COPYAN BERSIH (Fix Line Endings & Hidden Chars)
+          # Ini trik nuklir: copy konten ke file baru, hapus \r, beri nama aman
+          cat "$ORIGINAL_FILE" | tr -d '\r' > clean_bounty_hunter.py
+          
+          echo "Created clean file: clean_bounty_hunter.py"
+          ls -la clean_bounty_hunter.py
+          
+          # 3. Install dependencies
+          echo "=== Installing Dependencies ==="
+          pip install -r requirements.txt
+          
+          # 4. JALANKAN FILE BERSIH
+          echo "=== Running Clean Script ==="
+          python clean_bounty_hunter.py
