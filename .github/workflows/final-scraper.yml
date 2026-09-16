@@ -1,15 +1,34 @@
-- name: Run Bounty Hunter Script
-  env:
-    SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-    SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-  run: |
-    echo "=== DEBUG INFO ==="
-    echo "Current Dir: $(pwd)"
-    echo "Checking for main_scraper.py..."
-    ls -la main_scraper.py
-    
-    echo "=== Installing Dependencies ==="
-    pip install -r requirements.txt
-    
-    echo "=== Running Script ==="
-    python main_scraper.py
+name: AI Bounty Hunter - Auto Scan
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '*/15 * * * *'
+
+jobs:
+  hunt:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run Bounty Hunter Script
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          echo "=== DEBUG INFO ==="
+          echo "Current Dir: $(pwd)"
+          ls -la main_scraper.py
+          
+          echo "=== Installing Dependencies ==="
+          pip install -r requirements.txt
+          
+          echo "=== Running Script ==="
+          python main_scraper.py
