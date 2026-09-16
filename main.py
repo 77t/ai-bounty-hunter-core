@@ -10,6 +10,11 @@ SUPABASE_KEY = os.environ.get("SUPABASE_SERVICE_ROLE_KEY")
 
 def process_tasks():
     print(f"[{datetime.now()}] 🚀 Unified Agent System Started...")
+    
+    if not SUPABASE_URL or not SUPABASE_KEY:
+        print("❌ Missing Supabase credentials!")
+        return
+        
     supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
     
     # Ambil semua tugas yang belum dikerjakan
@@ -20,19 +25,28 @@ def process_tasks():
         print("✅ No pending tasks.")
         return
         
-    print(f"🔨 Found {len(tasks)} tasks to process...")
+    print(f" Found {len(tasks)} tasks to process...")
     
     for task in tasks:
-        print(f"\n🤖 Processing [{task['deal_type'].upper()}]: {task['title']}")
+        # SAFEGUARD: Cek apakah deal_type ada dan valid
+        deal_type = task.get('deal_type')
+        title = task.get('title', 'Unknown Task')
+        
+        if not deal_type:
+            print(f"⚠️ Skipping task '{title}': Missing deal_type")
+            continue
+            
+        print(f"\n🤖 Processing [{deal_type.upper()}]: {title}")
         result = None
         
-        # ROUTING OTOMATIS BERDASARKAN TIPE TUGAS
-        if task['deal_type'] == 'contest':
+        # ROUTING OTOMATIS
+        if deal_type == 'contest':
             result = execute_contest(task)
-        elif task['deal_type'] == 'bug_bounty':
+        elif deal_type == 'bug_bounty':
             result = execute_bug_bounty(task)
-        # Nanti tinggal tambah elif untuk kategori lain!
-        # elif task['deal_type'] == 'flash_sale': ...
+        else:
+            print(f"️ Unknown deal_type: {deal_type}. Skipping.")
+            continue
         
         if result and "error" not in result:
             supabase.table("bounties").update({
@@ -46,4 +60,3 @@ def process_tasks():
 
 if __name__ == "__main__":
     process_tasks()
-  
