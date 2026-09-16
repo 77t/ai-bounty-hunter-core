@@ -1,0 +1,43 @@
+# Daftar Sumber Data untuk Agen AI Bounty Hunter
+# Format: Nama Sumber | URL | Kategori | Tipe Data
+
+sources:
+  # === CRYPTO & AIRDROP ===
+  - name: "Airdrops.io Latest"
+    url: "https://airdrops.io/feed.xml"
+    category: "Crypto"
+    type: "rss"
+    
+  - name: "Cryptorank Drop Hunting"
+    url: "https://cryptorank.io/api/feed/drophunting"
+    category: "Crypto"
+    type: "api_json"
+
+  # === BUG BOUNTY & SECURITY ===
+  - name: "HackerOne Disclosed Reports"
+    url: "https://hackerone.com/hacktivity?filter=type%3Apublic&sort_type=latest_disclosure&direction=desc&per_page=50"
+    category: "BugBounty"
+    type: "html_scrape"
+    
+  - name: "Bugcrowd Public Programs"
+    url: "https://bugcrowd.com/programs.json"
+    category: "BugBounty"
+    type: "api_json"
+
+  # === MARKETPLACE & FREEBIES ===
+  - name: "Shopee Flash Sale RSS"
+    url: "https://shopee.co.id/rss/flash_sale"
+    category: "Marketplace"
+    type: "rss"
+    
+  - name: "Tokopedia Promo Feed"
+    url: "https://www.tokopedia.com/discover/promo/rss"
+    category: "Marketplace"
+    type: "rss"
+
+  # === GIVEAWAY & SAMPLES ===
+  - name: "Freebie Sites Aggregator"
+    url: "https://www.reddit.com/r/freebies.rss"
+    category: "Giveaway"
+    type: "rss"
+
