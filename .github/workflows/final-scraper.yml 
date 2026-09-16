@@ -1,0 +1,50 @@
+name: AI Bounty Hunter - Auto Scan
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+
+jobs:
+  hunt:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Find Project Root & Install
+        run: |
+          # Cari folder yang berisi main_scraper.py
+          PROJECT_DIR=$(find . -name "main_scraper.py" -type f -exec dirname {} \; | head -n 1)
+          
+          echo "=== DEBUG INFO ==="
+          echo "Current Dir: $(pwd)"
+          echo "Found Project Dir: $PROJECT_DIR"
+          ls -la "$PROJECT_DIR"
+          
+          # Masuk ke folder tersebut
+          cd "$PROJECT_DIR"
+          
+          echo "=== Installing Dependencies ==="
+          pip install -r requirements.txt
+
+      - name: Run Bounty Hunter Script
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          # Cari lagi foldernya untuk memastikan
+          PROJECT_DIR=$(find . -name "main_scraper.py" -type f -exec dirname {} \; | head -n 1)
+          
+          echo "=== Running Script from: $PROJECT_DIR ==="
+          cd "$PROJECT_DIR"
+          
+          # Jalankan script
+          python main_scraper.py
+
