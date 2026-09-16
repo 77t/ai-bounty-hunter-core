@@ -26,14 +26,14 @@ jobs:
           echo "=== DEBUG INFO ==="
           echo "Current Dir: $(pwd)"
           
-          # Cari file main_scraper.py di MANA PUN
-          echo "Searching for main_scraper.py..."
-          FOUND_FILE=$(find . -name "main_scraper.py" -type f | head -n 1)
+          # Cari file main_scraper.py TANPA PEDULI HURUF BESAR/KECIL
+          echo "Searching for main_scraper.py (case-insensitive)..."
+          FOUND_FILE=$(find . -iname "main_scraper.py" -type f | head -n 1)
           
           if [ -z "$FOUND_FILE" ]; then
             echo "FATAL ERROR: main_scraper.py NOT FOUND ANYWHERE!"
-            echo "Listing all files in repository:"
-            find . -type f -not -path "./.git/*"
+            echo "Listing ALL python files:"
+            find . -iname "*.py" -type f
             exit 1
           fi
           
