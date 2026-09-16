@@ -21,6 +21,16 @@ class BountyValidator:
         Menganalisis risiko scam berdasarkan deskripsi dan link.
         Score 0-100. >70 dianggap berbahaya.
         """
+        # SAFETY CHECK: Jika item bukan dict, handle gracefully agar tidak crash
+        if not isinstance(item, dict):
+            logger.warning(f"Invalid item type received: {type(item)}. Expected dict. Marking as SCAM.")
+            return {
+                "is_safe": False,
+                "risk_score": 100,
+                "status": "SCAM_DETECTED",
+                "reasons": [f"Invalid data format: expected dict, got {type(item).__name__}"]
+            }
+
         risk_score = 0
         reasons = []
 
@@ -117,3 +127,4 @@ def filter_bounties(raw_bounties: list, bounty_type: str) -> list:
 
     logger.info(f"Filter selesai: {len(approved_items)}/{len(raw_bounties)} item lolos validasi.")
     return approved_items
+    
