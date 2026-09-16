@@ -19,26 +19,30 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install dependencies
+      - name: Debug & Install Dependencies
         run: |
-          echo "=== Checking current directory ==="
+          echo "=== Current Directory ==="
           pwd
-          echo "=== Listing all files ==="
-          ls -la
-          echo "=== Installing requirements ==="
-          pip install -r ./requirements.txt
+          echo "=== List All Files (Recursive) ==="
+          find . -type f
+          echo "=== Installing Requirements ==="
+          REQ_FILE=$(find . -name "requirements.txt" -type f | head -n 1)
+          if [ -z "$REQ_FILE" ]; then
+            echo "ERROR: requirements.txt not found!"
+            exit 1
+          fi
+          pip install -r "$REQ_FILE"
 
       - name: Run Bounty Hunter Script
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: |
-          echo "=== Searching for main_scraper.py ==="
-          find . -name "main_scraper.py" -type f
-          echo "=== Running script dynamically ==="
+          echo "=== Finding main_scraper.py ==="
           SCRIPT_PATH=$(find . -name "main_scraper.py" -type f | head -n 1)
           if [ -z "$SCRIPT_PATH" ]; then
             echo "ERROR: main_scraper.py not found!"
             exit 1
           fi
+          echo "Running script from: $SCRIPT_PATH"
           python "$SCRIPT_PATH"
