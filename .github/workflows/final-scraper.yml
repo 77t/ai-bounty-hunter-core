@@ -1,59 +1,15 @@
-name: AI Bounty Hunter - Auto Scan
-
-on:
-  schedule:
-    - cron: '*/15 * * * *'
-  workflow_dispatch:
-
-jobs:
-  hunt:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Find and Run Script
-        env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-        run: |
-          # Cari file main_scraper.py di mana pun dia berada
-          SCRIPT_PATH=$(find . -name "main_scraper.py" -type f | head -n 1)
-          
-          if [ -z "$SCRIPT_PATH" ]; then
-            echo "FATAL ERROR: main_scraper.py NOT FOUND!"
-            echo "Listing all files:"
-            find . -type f
-            exit 1
-          fi
-          
-          # Ambil direktori tempat script berada
-          SCRIPT_DIR=$(dirname "$SCRIPT_PATH")
-          
-          echo "=== DEBUG INFO ==="
-          echo "Script found at: $SCRIPT_PATH"
-          echo "Script directory: $SCRIPT_DIR"
-          echo "Current working directory: $(pwd)"
-          echo "Files in script directory:"
-          ls -la "$SCRIPT_DIR"
-          
-          # Pindah ke direktori script
-          cd "$SCRIPT_DIR"
-          
-          # Install dependencies jika ada requirements.txt di folder yang sama
-          if [ -f "requirements.txt" ]; then
-            echo "Installing dependencies from requirements.txt..."
-            pip install -r requirements.txt
-          else
-            echo "WARNING: requirements.txt not found in $SCRIPT_DIR"
-          fi
-          
-          # Jalankan script
-          echo "Running main_scraper.py..."
-          python main_scraper.py
+- name: Run Bounty Hunter Script
+  env:
+    SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+    SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+  run: |
+    echo "=== DEBUG INFO ==="
+    echo "Current Dir: $(pwd)"
+    echo "Checking for main_scraper.py..."
+    ls -la main_scraper.py
+    
+    echo "=== Installing Dependencies ==="
+    pip install -r requirements.txt
+    
+    echo "=== Running Script ==="
+    python main_scraper.py
