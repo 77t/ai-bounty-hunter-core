@@ -27,3 +27,8 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: python main_scraper.py
+
+
+        # Force trigger - $(date)(Ganti  $(date)  dengan tanggal hari ini, misal:  # Force trigger - 2024-01-15 )
+        
+        
