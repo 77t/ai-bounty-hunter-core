@@ -12,47 +12,37 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          # Tambahkan ini untuk memastikan semua file ter-checkout dengan benar
+          fetch-depth: 0 
 
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - name: Run Bounty Hunter Script
+      - name: Debug & Run Script
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: |
-          echo "=== DEBUG INFO ==="
-          echo "Current Dir: $(pwd)"
-          
-          # Cari file main_scraper.py TANPA PEDULI HURUF BESAR/KECIL
-          echo "Searching for main_scraper.py (case-insensitive)..."
-          FOUND_FILE=$(find . -iname "main_scraper.py" -type f | head -n 1)
-          
-          if [ -z "$FOUND_FILE" ]; then
-            echo "FATAL ERROR: main_scraper.py NOT FOUND ANYWHERE!"
-            echo "Listing ALL python files:"
-            find . -iname "*.py" -type f
-            exit 1
-          fi
-          
-          echo "File found at: $FOUND_FILE"
-          
-          # Ambil direktori file tersebut
-          SCRIPT_DIR=$(dirname "$FOUND_FILE")
-          echo "Script Directory: $SCRIPT_DIR"
-          
-          # Pindah ke direktori script
-          cd "$SCRIPT_DIR"
-          echo "New Current Dir: $(pwd)"
-          
-          # List isi folder untuk konfirmasi
+          echo "=== DEBUG START ==="
+          pwd
           ls -la
           
-          echo "=== Installing Dependencies ==="
-          pip install -r requirements.txt
-          
-          echo "=== Running Script ==="
-          python main_scraper.py
+          # Cek manual apakah file ada
+          if [ -f "./main_scraper.py" ]; then
+            echo "SUCCESS: main_scraper.py found at root!"
+            
+            echo "=== Installing Dependencies ==="
+            pip install -r requirements.txt
+            
+            echo "=== Running Script ==="
+            python main_scraper.py
+          else
+            echo "FATAL: File still missing even after ls showed it."
+            echo "Trying to list all .py files recursively:"
+            find . -name "*.py"
+            exit 1
+          fi
           
