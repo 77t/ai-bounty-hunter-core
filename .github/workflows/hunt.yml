@@ -3,12 +3,12 @@ name: AI Super Hunter - Auto Scan & Work
 on:
   schedule:
     - cron: '*/15 * * * *'  # Jalan setiap 15 menit
-  workflow_dispatch:        # Bisa manual trigger juga
+  workflow_dispatch:         # Bisa manual trigger juga
 
 jobs:
   hunt:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -26,12 +26,14 @@ jobs:
       - name: Install Ollama & Pull Qwen2.5 Model
         run: |
           curl -fsSL https://ollama.com/install.sh | sh
-          ollama serve & 
+          ollama serve &
           sleep 5
           ollama pull qwen2.5:7b-instruct-q4_K_M
 
       - name: Run Unified Agent System
         env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
         run: python main.py
