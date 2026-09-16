@@ -10,13 +10,31 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout code to ROOT
         uses: actions/checkout@v4
+        with:
+          path: '.'  # <--- INI YANG PENTING! Memaksa checkout ke root direktori
 
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+
+      - name: Verify Files Exist
+        run: |
+          echo "=== CURRENT DIRECTORY ==="
+          pwd
+          echo "=== LISTING FILES ==="
+          ls -la
+          if [ ! -f "main_scraper.py" ]; then
+            echo "FATAL: main_scraper.py NOT FOUND in $(pwd)"
+            exit 1
+          fi
+          if [ ! -f "requirements.txt" ]; then
+            echo "FATAL: requirements.txt NOT FOUND in $(pwd)"
+            exit 1
+          fi
+          echo "✅ All files verified!"
 
       - name: Install Dependencies
         run: |
@@ -28,4 +46,3 @@ jobs:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: |
           python main_scraper.py
-          
