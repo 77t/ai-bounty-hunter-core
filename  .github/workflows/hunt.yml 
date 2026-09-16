@@ -4,7 +4,7 @@ on:
   schedule:
     # Jalankan setiap 15 menit (Waktu UTC)
     - cron: '*/15 * * * *'
-  workflow_dispatch: # Memungkinkan Anda menjalankan manual kapan saja
+  workflow_dispatch: # Memungkinkan Anda menjalankan manual kapan saja 
 
 jobs:
   hunt:
