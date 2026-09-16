@@ -21,9 +21,9 @@ class BountyValidator:
         Menganalisis risiko scam berdasarkan deskripsi dan link.
         Score 0-100. >70 dianggap berbahaya.
         """
-        # SAFETY CHECK: Jika item bukan dict, handle gracefully agar tidak crash
+        # SAFETY CHECK 1: Handle jika item bukan dict
         if not isinstance(item, dict):
-            logger.warning(f"Invalid item type received: {type(item)}. Expected dict. Marking as SCAM.")
+            logger.warning(f"Invalid item type in check_scam_risk: {type(item)}. Marking as SCAM.")
             return {
                 "is_safe": False,
                 "risk_score": 100,
@@ -70,48 +70,56 @@ class BountyValidator:
         Simulasi cek stok.
         Di production, ini harus hit API marketplace/scrape halaman produk real-time.
         """
-        # Contoh logika sederhana: Jika harga glitch terlalu murah (<10% harga normal),
-        # kemungkinan besar stok sudah habis atau sistem error.
         normal_price = item.get('normal_price', 0)
         glitch_price = item.get('glitch_price', 0)
 
         if normal_price > 0 and glitch_price > 0:
             discount_pct = ((normal_price - glitch_price) / normal_price) * 100
-            if discount_pct > 95:  # Diskon >95% biasanya stok habis dalam detik
+            if discount_pct > 95:
                 logger.warning(f"Stok kemungkinan habis: Diskon {discount_pct:.0f}% terlalu ekstrem")
                 return False
 
-        # Default anggap masih ada stok jika tidak ada data spesifik
         return True
 
     def validate_bounty(self, bounty_item: dict, bounty_type: str) -> dict:
         """
         Fungsi utama validasi. Menggabungkan cek scam + cek stok.
         """
+        # SAFETY CHECK 2: Handle jika bounty_item bukan dict DI SINI JUGA
+        if not isinstance(bounty_item, dict):
+            logger.error(f"CRITICAL: Non-dict item passed to validate_bounty: {bounty_item}. Skipping.")
+            return {
+                "original_data": str(bounty_item),
+                "type": bounty_type,
+                "final_status": "REJECTED_INVALID_FORMAT",
+                "scam_analysis": {"is_safe": False, "reasons": ["Data is not a dictionary"]}
+            }
+
         result = {"original_data": bounty_item, "type": bounty_type}
 
-        # A. Validasi Scam (Untuk semua jenis bounty)
+        # A. Validasi Scam
         scam_check = self.check_scam_risk(bounty_item)
         result["scam_analysis"] = scam_check
 
         if not scam_check["is_safe"]:
             result["final_status"] = "REJECTED_SCAM"
-            logger.warning(f"Bounty DITOLAK karena risiko scam: {bounty_item.get('name')}")
+            # Aman diakses karena sudah dicek di atas bahwa bounty_item adalah dict
+            logger.warning(f"Bounty DITOLAK karena risiko scam: {bounty_item.get('name', 'Unknown')}")
             return result
 
-        # B. Validasi Stok (Khusus untuk Price Glitch/Voucher Fisik)
+        # B. Validasi Stok
         if bounty_type in ["price_glitch", "voucher_physical"]:
             stock_check = self.check_stock_availability(bounty_item)
             result["stock_available"] = stock_check
 
             if not stock_check:
                 result["final_status"] = "REJECTED_OUT_OF_STOCK"
-                logger.warning(f"Bounty DITOLAK karena stok habis: {bounty_item.get('name')}")
+                logger.warning(f"Bounty DITOLAK karena stok habis: {bounty_item.get('name', 'Unknown')}")
                 return result
 
         # C. Lolos Semua Filter
         result["final_status"] = "APPROVED"
-        logger.info(f"Bounty DISETUJUI: {bounty_item.get('name')}")
+        logger.info(f"Bounty DISETUJUI: {bounty_item.get('name', 'Unknown')}")
         return result
 
 
