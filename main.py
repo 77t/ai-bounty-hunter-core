@@ -49,7 +49,7 @@ def main():
     FUNGSI UTAMA ORKESTRATOR
     """
     logger.info("="*50)
-    logger.info("🚀 AI BOUNTY HUNTER SYSTEM STARTED")
+    logger.info(" AI BOUNTY HUNTER SYSTEM STARTED")
     logger.info(f"🕒 Timestamp: {datetime.utcnow().isoformat()}")
     logger.info("="*50)
 
@@ -70,7 +70,7 @@ def main():
         return format_response("error", message="Hunter agent failure")
 
     # 3. PHASE 2: VALIDATION
-    logger.info("️ [PHASE 2] Memvalidasi hasil hunting...")
+    logger.info("🛡️ [PHASE 2] Memvalidasi hasil hunting...")
     verified_bounties = []
 
     for category in ["crypto_airdrops", "price_glitches", "vouchers"]:
@@ -92,6 +92,7 @@ def main():
 
     for bounty in verified_bounties:
         try:
+            # Baris ini yang tadi error indentasinya, sekarang sudah fix
             logo_url = generate_logo(bounty.get('name', 'Bounty'))
             is_safe = check_image_safety(logo_url)
             
@@ -99,31 +100,7 @@ def main():
                 "bounty": bounty,
                 "logo": logo_url,
                 "is_safe": is_safe,
-                "generated_at": datetime.utcnow().isoformat() # Menggunakan datetime standar
-            }
-            final_packages.append(package)
-            logger.info(f"📦 Paket siap: {bounty.get('name')}")
-            
-        except Exception as e:
-            logger.error(f" Gagal generate aset untuk {bounty.get('name')}: {str(e)}")
-
-    logger.info("="*50)
-    logger.info("🏁 SIKLUS HUNTING SELESAI")
-    logger.info("="*50)
-    
-    return format_response("success", data=final_packages)
-
-
-if __name__ == "__main__":
-    result = main()
-            logo_url = generate_logo(bounty.get('name', 'Bounty'))
-            is_safe = check_image_safety(logo_url)
-            
-            package = {
-                "bounty": bounty,
-                "logo": logo_url,
-                "is_safe": is_safe,
-                "generated_at": get_timestamp()
+                "generated_at": datetime.utcnow().isoformat()
             }
             final_packages.append(package)
             logger.info(f"📦 Paket siap: {bounty.get('name')}")
@@ -140,3 +117,4 @@ if __name__ == "__main__":
 
 if __name__ == "__main__":
     result = main()
+    
