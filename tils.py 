@@ -1,0 +1,82 @@
+import os
+import json
+import logging
+from datetime import datetime
+from dotenv import load_dotenv
+
+# 1. Load Environment Variables (untuk testing lokal)
+load_dotenv()
+
+# 2. Setup Logging System
+def setup_logger(name: str, level=logging.INFO):
+    """
+    Membuat logger standar dengan format waktu & level pesan.
+    Digunakan oleh semua agent agar log konsisten.
+    """
+    logger = logging.getLogger(name)
+    
+    # Hindari duplicate handler jika dipanggil berkali-kali
+    if not logger.handlers:
+        logger.setLevel(level)
+        
+        # Handler Console (untuk GitHub Actions / Terminal)
+        console_handler = logging.StreamHandler()
+        console_handler.setLevel(level)
+        
+        # Format Pesan
+        formatter = logging.Formatter(
+            '[%(asctime)s] %(levelname)s - %(name)s: %(message)s',
+            datefmt='%Y-%m-%d %H:%M:%S'
+        )
+        console_handler.setFormatter(formatter)
+        logger.addHandler(console_handler)
+        
+    return logger
+
+# 3. Helper untuk Validasi Secrets
+def validate_secrets():
+    """
+    Cek apakah semua secrets wajib sudah tersedia sebelum sistem jalan.
+    Mencegah error 'NoneType' di tengah proses.
+    """
+    required_secrets = [
+        "HF_TOKEN",
+        "SUPABASE_URL", 
+        "SUPABASE_SERVICE_KEY"
+    ]
+    
+    missing = []
+    for secret in required_secrets:
+        if not os.environ.get(secret):
+            missing.append(secret)
+            
+    if missing:
+        raise EnvironmentError(
+            f"❌ SECRETS HILANG! Pastikan variabel berikut ada di .env atau GitHub Secrets: {', '.join(missing)}"
+        )
+        
+    return True
+
+# 4. Helper Format Response JSON
+def format_response(status: str, data: dict = None, message: str = ""):
+    """
+    Standarisasi output JSON agar mudah dibaca oleh frontend/API.
+    """
+    response = {
+        "timestamp": datetime.utcnow().isoformat(),
+        "status": status,
+        "message": message
+    }
+    
+    if data:
+        response["data"] = data
+        
+    return json.dumps(response, indent=2, ensure_ascii=False)
+
+# 5. Helper Konversi Waktu
+def get_timestamp_id():
+    """
+    Generate ID unik berbasis waktu untuk nama file/logo.
+    Format: YYYYMMDD_HHMMSS
+    """
+    return datetime.utcnow().strftime("%Y%m%d_%H%M%S")
