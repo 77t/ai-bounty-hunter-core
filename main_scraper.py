@@ -1,47 +1,56 @@
 import os
 import time
+import requests
 from supabase import create_client, Client
+from datetime import datetime
 
-# Ambil secrets dari environment variable (sudah disetting di YAML)
+# Konfigurasi dari Environment Variables (sudah disetting di YAML)
 SUPABASE_URL = os.environ.get("SUPABASE_URL")
 SUPABASE_KEY = os.environ.get("SUPABASE_SERVICE_ROLE_KEY")
 
-def main():
-    print("=== AI Bounty Hunter Script Started ===")
+def scrape_bounties():
+    """Fungsi utama untuk melakukan hunting/scraping bounty"""
+    print(f"[{datetime.now()}] Starting AI Bounty Hunter scan...")
     
-    # Cek apakah secrets tersedia
+    # Validasi credentials
     if not SUPABASE_URL or not SUPABASE_KEY:
-        print("ERROR: Supabase credentials not found in environment variables!")
-        return
-
+        raise ValueError("Supabase credentials missing! Check GitHub Secrets.")
+    
+    # Inisialisasi Supabase Client
+    supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+    print("✅ Connected to Supabase successfully")
+    
+    # TODO: Ganti URL ini dengan target scraping bounty kamu yang sebenarnya
+    # Ini adalah placeholder untuk demonstrasi bahwa script berjalan
+    target_url = "https://hackerone.com/directory/programs" 
+    
     try:
-        # Inisialisasi Supabase Client
-        supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
-        print("Successfully connected to Supabase!")
-
-        # CONTOH LOGIKA SCRAPING SEDERHANA
-        # (Ganti bagian ini dengan logika scraping asli kamu jika ada)
-        print("Starting bounty hunting process...")
+        print(f"🔍 Scanning target: {target_url}")
         
-        # Simulasi data hasil scrape
-        sample_data = {
-            "title": "Test Bounty Found",
-            "url": "https://example.com/bounty/123",
-            "reward": "$500",
-            "scraped_at": time.strftime("%Y-%m-%d %H:%M:%S")
-        }
-
-        # Insert ke tabel 'bounties' (sesuaikan nama tabel dengan database kamu)
-        # Jika tabel belum ada, script ini akan error. Pastikan tabel sudah dibuat di Supabase.
-        response = supabase.table("bounties").insert(sample_data).execute()
+        # Simulasi hasil scraping (ganti dengan logika scraping aslimu)
+        # Jika kamu punya kode scraping spesifik dari sesi sebelumnya, 
+        # silakan paste di bagian ini
+        mock_results = [
+            {
+                "program": "Example Program",
+                "title": "XSS Vulnerability Found",
+                "severity": "High",
+                "reward": "$1000",
+                "url": target_url,
+                "scraped_at": datetime.now().isoformat()
+            }
+        ]
         
-        print(f"Data inserted successfully: {response.data}")
-        print("=== Script Finished Successfully ===")
-
+        # Insert hasil ke tabel 'bounties' di Supabase
+        for item in mock_results:
+            response = supabase.table("bounties").insert(item).execute()
+            print(f" Saved: {item['title']} - {item['reward']}")
+            
+        print(f"✅ Scan completed. {len(mock_results)} bounties processed.")
+        
     except Exception as e:
-        print(f"FATAL ERROR during execution: {str(e)}")
+        print(f"❌ Error during scraping: {str(e)}")
         raise
 
 if __name__ == "__main__":
-    main()
-
+    scrape_bounties()
