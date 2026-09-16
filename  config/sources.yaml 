@@ -1,8 +1,40 @@
-# Daftar Sumber Data untuk Agen AI Bounty Hunter
-# Format: Nama Sumber | URL | Kategori | Tipe Data
+# AI BOUNTY HUNTER - MASTER SOURCE LIST (LENGKAP)
+# Menggabungkan Quick Win, Blue Ocean, Crypto, Bug Bounty & Freebies
 
 sources:
-  # === CRYPTO & AIRDROP ===
+  # === QUICK WIN: VOUCHER & DIGITAL MONEY (PRIORITAS TERTINGGI) ===
+  - name: "DANA Promo API"
+    url: "https://api.dana.id/promo/voucher/list" 
+    category: "DigitalMoney"
+    type: "api_json"
+    priority: "HIGH"
+    
+  - name: "OVO Cashback Feed"
+    url: "https://www.ovo.id/api/campaigns/active"
+    category: "DigitalMoney"
+    type: "api_json"
+    priority: "HIGH"
+
+  # === BLUE OCEAN MARKETPLACE (GLITCH MUDAH) ===
+  - name: "TikTok Shop Live Deals"
+    url: "https://www.tiktok.com/api/shop/flash_sale/feed"
+    category: "Marketplace"
+    type: "html_scrape"
+    note: "Pantau saat transisi live stream"
+    
+  - name: "Blibli Elektronik Flash Sale"
+    url: "https://www.blibli.com/backend/search/products?keyword=elektronik&sort=price_asc"
+    category: "Marketplace"
+    type: "api_json"
+    note: "Filter harga <10% dari normal"
+
+  - name: "Lazada Cross-Border Glitch"
+    url: "https://www.lazada.co.id/catalog/?q=&from=overseas&sort=priceasc"
+    category: "Marketplace"
+    type: "html_scrape"
+    note: "Fokus seller rating <3.5"
+
+  # === CRYPTO & AIRDROP (JACKPot BESAR) ===
   - name: "Airdrops.io Latest"
     url: "https://airdrops.io/feed.xml"
     category: "Crypto"
@@ -13,7 +45,21 @@ sources:
     category: "Crypto"
     type: "api_json"
 
-  # === BUG BOUNTY & SECURITY ===
+  # === BUG BOUNTY (KEAMANAN & HACKING) ===
+  # Target Baru: Program segar & Challenge
+  - name: "YesWeHack Public Programs"
+    url: "https://yeswehack.com/api/programs?scope=public&sort=newest"
+    category: "BugBounty"
+    type: "api_json"
+    note: "Target program baru (<7 hari)"
+    
+  - name: "Intigriti Monthly Challenges"
+    url: "https://challenge.intigriti.io/api/challenges/active"
+    category: "BugBounty"
+    type: "api_json"
+    note: "Soal CTF level easy-medium"
+
+  # Target Lama: Platform Mayor (Untuk monitoring pasif)
   - name: "HackerOne Disclosed Reports"
     url: "https://hackerone.com/hacktivity?filter=type%3Apublic&sort_type=latest_disclosure&direction=desc&per_page=50"
     category: "BugBounty"
@@ -24,7 +70,24 @@ sources:
     category: "BugBounty"
     type: "api_json"
 
-  # === MARKETPLACE & FREEBIES ===
+  # === FREEBIES, GIVEAWAY & SAMPLES ===
+  - name: "Reddit r/freebies Hot"
+    url: "https://www.reddit.com/r/freebies/hot.json"
+    category: "Giveaway"
+    type: "api_json"
+    
+  - name: "Freebie Sites Aggregator"
+    url: "https://www.reddit.com/r/freebies.rss"
+    category: "Giveaway"
+    type: "rss"
+
+  - name: "ProductHunt Free Tools"
+    url: "https://api.producthunt.com/v2/api/graphql"
+    category: "Giveaway"
+    type: "api_graphql"
+    note: "Filter tag: free-tool"
+
+  # === MARKETPLACE TRADISIONAL (MONITORING BACKGROUND) ===
   - name: "Shopee Flash Sale RSS"
     url: "https://shopee.co.id/rss/flash_sale"
     category: "Marketplace"
@@ -34,10 +97,3 @@ sources:
     url: "https://www.tokopedia.com/discover/promo/rss"
     category: "Marketplace"
     type: "rss"
-
-  # === GIVEAWAY & SAMPLES ===
-  - name: "Freebie Sites Aggregator"
-    url: "https://www.reddit.com/r/freebies.rss"
-    category: "Giveaway"
-    type: "rss"
-
