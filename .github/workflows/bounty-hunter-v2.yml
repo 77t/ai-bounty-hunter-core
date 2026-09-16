@@ -32,5 +32,13 @@ jobs:
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-        run: python main_scraper.py
-        
+        run: |
+          echo "=== Searching for main_scraper.py ==="
+          find . -name "main_scraper.py" -type f
+          echo "=== Running script dynamically ==="
+          SCRIPT_PATH=$(find . -name "main_scraper.py" -type f | head -n 1)
+          if [ -z "$SCRIPT_PATH" ]; then
+            echo "ERROR: main_scraper.py not found!"
+            exit 1
+          fi
+          python "$SCRIPT_PATH"
