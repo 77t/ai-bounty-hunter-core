@@ -1,30 +1,26 @@
-name: AI Bounty Hunter - Auto Scan
-
-on:
-  schedule:
-    # Jalankan setiap 15 menit (Waktu UTC)
-    - cron: '*/15 * * * *'
-  workflow_dispatch: # Memungkinkan Anda menjalankan manual kapan saja 
-
-jobs:
-  hunt:
-    runs-on: ubuntu-latest
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-          
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-        
-      - name: Run Bounty Hunter Script
+नाम: एआई बाउंटी हंटर - ऑटो स्कैन
+पर:
+  कार्यक्रम:
+    # हर 15 मिनट में चलाएं (UTC समय)
+    - क्रॉन: '*/15 * * * *'
+  workflow_dispatch: # आपको किसी भी समय मैन्युअल रूप से चलाने की अनुमति देता है 
+नौकरियाँ:
+  शिकार:
+    रन-ऑन: उबंटू - नवीनतम    
+    चरण:
+      - नाम: चेकआउट कोड
+        उपयोग: actions/checkout@v4        
+      - नाम: सेटअप पायथन
+        Uses: Actions/Setup-Python@V5
+        साथ:
+          पायथन संस्करण: '3.11"          
+      - नाम: निर्भरताएँ स्थापित करें
+        रन: pip install -r requirements.txt        
+      - नाम: बाउंटी हंटर स्क्रिप्ट चलाएँ
         env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-        run: python main_scraper.py
+          SUPABASE_URL: ${{secrets.SUPABASE_URL}}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ रहस्य। SUPABASE_SERVICE_ROLE_KEY }}
+        रन: python main_scraper.py
 
+
+बलपूर्वक ट्रिगर करने वाली क्रियाएँ।
