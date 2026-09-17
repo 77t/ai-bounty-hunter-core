@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AI Bounty Hunter Command Center</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Font Awesome untuk Ikon Premium -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="skin-emerald">
+    <div class="app-container">
+        <!-- Header Mewah -->
+        <header class="top-bar">
+            <div class="brand">
+                <i class="fa-solid fa-shield-halved"></i> AI BOUNTY CEO
+            </div>
+            <div class="header-actions">
+                <button id="theme-toggle" class="icon-btn" aria-label="Ganti Tema">
+                    <i class="fa-solid fa-palette"></i>
+                </button>
+                <button id="force-rescan" class="pulse-btn">
+                    <i class="fa-solid fa-arrows-rotate"></i> FORCE RE-SCAN
+                </button>
+            </div>
+        </header>
+
+        <!-- Tab Navigasi Mobile Friendly -->
+        <nav class="tab-nav">
+            <button class="tab-btn active" data-tab="crypto">
+                <i class="fa-brands fa-bitcoin"></i> Crypto
+            </button>
+            <button class="tab-btn" data-tab="bugbounty">
+                <i class="fa-solid fa-bug"></i> Bug Bounty
+            </button>
+            <button class="tab-btn" data-tab="goods">
+                <i class="fa-solid fa-cart-shopping"></i> Barang
+            </button>
+            <button class="tab-btn" data-tab="control">
+                <i class="fa-solid fa-gear"></i> Kontrol
+            </button>
+        </nav>
+
+        <!-- Konten Tab -->
+        <main class="content-area">
+            <!-- TAB 1: CRYPTO & AIRDROP -->
+            <section id="tab-crypto" class="tab-content active">
+                <div class="card-grid" id="crypto-list">
+                    <div class="empty-state">
+                        <i class="fa-solid fa-spinner fa-spin"></i> Memuat airdrop...
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 2: BUG BOUNTY WAR ROOM -->
+            <section id="tab-bugbounty" class="tab-content">
+                <div class="card-grid" id="bug-list">
+                    <div class="empty-state">
+                        <i class="fa-solid fa-magnifying-glass"></i> Menunggu hasil scan...
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 3: BARANG & FLASH SALE -->
+            <section id="tab-goods" class="tab-content">
+                <div class="card-grid" id="goods-list">
+                    <div class="empty-state">
+                        <i class="fa-solid fa-box-open"></i> Mencari glitch harga...
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 4: KONTROL & LOGS -->
+            <section id="tab-control" class="tab-content">
+                <div class="panel-status">
+                    <h3><i class="fa-solid fa-microchip"></i> STATUS AGEN AI</h3>
+                    <div class="agent-row">
+                        <span>HunterAgent</span> 
+                        <span class="status-dot green" title="Aktif Scanning"></span>
+                    </div>
+                    <div class="agent-row">
+                        <span>ValidatorAgent</span> 
+                        <span class="status-dot yellow" title="Menunggu Data"></span>
+                    </div>
+                    <div class="agent-row">
+                        <span>DesignerAgent</span> 
+                        <span class="status-dot blue" title="Standby"></span>
+                    </div>
+                </div>
+                
+                <div class="panel-accounts">
+                    <h3><i class="fa-solid fa-users"></i> STATUS 10 AKUN FISIK</h3>
+                    <div id="account-status-grid" class="account-grid">
+                        <!-- Diisi otomatis oleh JS -->
+                    </div>
+                </div>
+
+                <div class="panel-logs">
+                    <h3><i class="fa-solid fa-terminal"></i> LIVE EXECUTION LOG</h3>
+                    <div id="live-log" class="log-box"></div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="auto_claim_engine.js"></script>
+</body>
+</html>
