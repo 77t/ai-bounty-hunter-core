@@ -3,287 +3,312 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teguh Hunter - NEW BLUE EDITION</title>
+    <title>Teguh Hunter - Gold Edition</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
-            background: #f0f4f8; /* Background abu-biru muda */
-            color: #1a202c; 
-            min-height: 100vh;
-            padding-bottom: 80px;
+        /* Custom UI Enhancements */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #0066cc; border-radius: 10px; }
+        
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 102, 204, 0.15);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04);
         }
         
-        /* HEADER BIRU TECH */
-        .header {
-            position: sticky;
-            top: 0;
+        .tab-active {
+            background-color: #0066cc !important;
+            color: white !important;
+            font-weight: bold;
+            border-color: transparent !important;
+            box-shadow: 0 4px 12px rgba(0, 102, 204, 0.3);
+        }
+        
+        .btn-primary {
             background: linear-gradient(135deg, #0066cc 0%, #004499 100%);
-            padding: 16px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 100;
-            box-shadow: 0 4px 12px rgba(0, 102, 204, 0.3);
-        }
-        .logo {
-            width: 40px;
-            height: 40px;
-            background: white;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #0066cc;
-            font-weight: bold;
-            font-size: 20px;
-        }
-        .title { font-size: 18px; font-weight: bold; color: white; }
-        .subtitle { font-size: 10px; color: rgba(255,255,255,0.8); }
-        .status { font-size: 10px; color: rgba(255,255,255,0.7); text-align: right; }
-        
-        /* TABS BIRU */
-        .tabs {
-            position: sticky;
-            top: 72px;
-            background: white;
-            padding: 12px 16px;
-            display: flex;
-            gap: 8px;
-            overflow-x: auto;
-            border-bottom: 1px solid #e2e8f0;
-            z-index: 99;
-        }
-        .tab {
-            padding: 8px 16px;
-            border-radius: 20px;
-            border: 1px solid #cbd5e0;
-            background: white;
-            color: #4a5568;
-            font-size: 12px;
-            white-space: nowrap;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .tab.active {
-            background: #0066cc; /* BIRU AKTIF */
             color: white;
-            border-color: #0066cc;
-            font-weight: bold;
-            box-shadow: 0 2px 8px rgba(0, 102, 204, 0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 102, 204, 0.4); }
+        .btn-primary:active { transform: scale(0.98); }
         
-        /* STATS GRID */
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            padding: 16px;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        .stat-card {
-            background: white;
-            padding: 16px;
-            border-radius: 12px;
-            border-left: 4px solid #0066cc; /* BORDER BIRU */
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-        .stat-label { font-size: 10px; color: #718096; text-transform: uppercase; font-weight: bold; }
-        .stat-value { font-size: 24px; font-weight: bold; margin-top: 4px; color: #1a202c; }
-        
-        /* CONTENT AREA */
-        .content {
-            padding: 16px;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        .empty-state {
-            background: white;
-            padding: 40px 20px;
-            border-radius: 16px;
-            text-align: center;
-            border: 2px dashed #bee3f8; /* DASHED BIRU MUDA */
-        }
-        .empty-icon { font-size: 48px; margin-bottom: 16px; }
-        .empty-title { font-size: 16px; font-weight: bold; color: #2b6cb0; margin-bottom: 8px; }
-        .empty-desc { font-size: 12px; color: #718096; line-height: 1.5; }
-        
-        /* TEST BUTTON BIRU */
-        .test-btn {
-            margin-top: 20px;
-            padding: 12px 24px;
-            background: #0066cc;
-            border: none;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: bold;
-            color: white;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0, 102, 204, 0.3);
-        }
-        .test-btn:hover { background: #0052a3; transform: translateY(-2px); }
-        
-        /* CARD TEMPLATE */
-        .card {
-            background: white;
-            padding: 20px;
-            border-radius: 16px;
-            margin-bottom: 16px;
-            border-left: 4px solid #0066cc;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            display: none;
-        }
-        .card.visible { display: block; animation: slideUp 0.3s ease; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
-        .card-header { display: flex; justify-content: space-between; margin-bottom: 12px; }
-        .badge { 
-            padding: 4px 12px; 
-            border-radius: 20px; 
-            font-size: 10px; 
-            font-weight: bold; 
-            background: #ebf8ff; 
-            color: #0066cc; 
-        }
-        .card-title { font-size: 18px; font-weight: bold; margin-bottom: 8px; color: #1a202c; }
-        .card-desc { font-size: 14px; color: #4a5568; line-height: 1.5; margin-bottom: 16px; }
-        .action-btn {
-            width: 100%;
-            padding: 14px;
-            background: #0066cc;
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-        }
+        .status-badge { padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; }
+        .badge-critical { background: #fee2e2; color: #dc2626; border: 1px solid #fecaca; }
+        .badge-high { background: #ffedd5; color: #ea580c; border: 1px solid #fed7aa; }
+        .badge-normal { background: #e0f2fe; color: #0284c7; border: 1px solid #bae6fd; }
+
+        @keyframes pulse-blue { 0% { box-shadow: 0 0 0 0 rgba(0, 102, 204, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(0, 102, 204, 0); } 100% { box-shadow: 0 0 0 0 rgba(0, 102, 204, 0); } }
+        .live-indicator { animation: pulse-blue 2s infinite; }
     </style>
 </head>
-<body>
+<body class="bg-gray-50 text-gray-800 font-sans min-h-screen pb-24">
 
-    <!-- HEADER BIRU -->
-    <div class="header">
-        <div style="display:flex;align-items:center;gap:12px;">
-            <div class="logo">T</div>
+    <!-- HEADER COMMANDER -->
+    <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-blue-100 p-4 flex justify-between items-center shadow-sm">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-[#0066cc] rounded-xl flex items-center justify-center text-white font-bold text-xl live-indicator shadow-lg shadow-blue-200">T</div>
             <div>
-                <div class="title">TEGUH HUNTER</div>
-                <div class="subtitle">NEW BLUE EDITION v2.0</div>
+                <h1 class="font-extrabold text-lg leading-tight text-[#0066cc] tracking-tight">TEGUH HUNTER</h1>
+                <p class="text-[10px] text-gray-500 font-medium">Gold Edition • Live Data Connected</p>
             </div>
         </div>
-        <div class="status" id="status">UI Ready</div>
-    </div>
+        <div class="text-right">
+            <div id="connection-status" class="text-[10px] font-mono text-gray-400 mb-0.5">Connecting...</div>
+            <div id="last-update" class="text-[9px] text-gray-400">--:--</div>
+        </div>
+    </header>
 
-    <!-- TABS -->
-    <div class="tabs">
-        <div class="tab" onclick="switchTab('uang', this)">💰 Uang & Crypto</div>
-        <div class="tab" onclick="switchTab('bug', this)">🛡️ Bug Bounty</div>
-        <div class="tab active" onclick="switchTab('barang', this)">📦 Barang & Diskon</div>
-        <div class="tab" onclick="switchTab('kontrol', this)">⚙️ Kontrol & Logs</div>
-    </div>
+    <!-- NAVIGATION TABS -->
+    <nav class="sticky top-[72px] z-40 bg-white border-b border-gray-100 overflow-x-auto whitespace-nowrap px-3 py-3 shadow-sm scrollbar-hide">
+        <div class="inline-flex gap-2 min-w-max">
+            <button onclick="switchTab('uang')" id="tab-uang" class="tab-btn px-4 py-2 rounded-full text-xs border border-gray-200 bg-white text-gray-600 flex items-center gap-1.5 hover:bg-blue-50 transition-all">💰 Uang & Crypto</button>
+            <button onclick="switchTab('bug')" id="tab-bug" class="tab-btn px-4 py-2 rounded-full text-xs border border-gray-200 bg-white text-gray-600 flex items-center gap-1.5 hover:bg-blue-50 transition-all">🛡️ Bug Bounty</button>
+            <button onclick="switchTab('barang')" id="tab-barang" class="tab-btn tab-active px-4 py-2 rounded-full text-xs border border-transparent flex items-center gap-1.5 transition-all">📦 Barang & Diskon</button>
+            <button onclick="switchTab('kontrol')" id="tab-kontrol" class="tab-btn px-4 py-2 rounded-full text-xs border border-gray-200 bg-white text-gray-600 flex items-center gap-1.5 hover:bg-blue-50 transition-all">⚙️ Kontrol & Logs</button>
+        </div>
+    </nav>
 
-    <!-- STATS -->
-    <div class="stats">
-        <div class="stat-card">
-            <div class="stat-label">Total Potensi</div>
-            <div class="stat-value">Rp 0</div>
-        </div>
-        <div class="stat-card" style="border-left-color:#3182ce;">
-            <div class="stat-label">Auto-Executed</div>
-            <div class="stat-value">0</div>
-        </div>
-        <div class="stat-card" style="border-left-color:#ed8936;">
-            <div class="stat-label">Pending Action</div>
-            <div class="stat-value">0</div>
-        </div>
-        <div class="stat-card" style="border-left-color:#805ad5;">
-            <div class="stat-label">Wallet Settled</div>
-            <div class="stat-value">Rp 0</div>
-        </div>
-    </div>
-
-    <!-- CONTENT AREA -->
-    <div class="content" id="content">
-        <!-- Empty State Default -->
-        <div class="empty-state" id="empty-barang">
-            <div class="empty-icon">🔵</div>
-            <div class="empty-title">VERSI BARU BERHASIL TER-DEPLOY!</div>
-            <div class="empty-desc">
-                Warna biru menandakan kode terbaru sudah aktif.<br>
-                Tombol tab berfungsi normal tanpa error.<br>
-                Klik tombol di bawah untuk verifikasi JavaScript.
+    <!-- MAIN CONTENT -->
+    <main class="p-4 max-w-4xl mx-auto space-y-5">
+        
+        <!-- DASHBOARD SUMMARY CARDS -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+            <div class="glass-panel p-4 rounded-2xl border-l-4 border-[#0066cc]">
+                <p class="text-[10px] text-gray-500 uppercase tracking-wider font-bold">Total Potensi</p>
+                <h3 id="stat-potential" class="text-xl font-black text-gray-800 mt-1">Loading...</h3>
             </div>
-            <button class="test-btn" onclick="testFunction()">✅ TEST JAVASCRIPT FUNCTION</button>
+            <div class="glass-panel p-4 rounded-2xl border-l-4 border-green-500">
+                <p class="text-[10px] text-gray-500 uppercase tracking-wider font-bold">Bug Critical</p>
+                <h3 id="stat-critical" class="text-xl font-black text-gray-800 mt-1">0</h3>
+            </div>
+            <div class="glass-panel p-4 rounded-2xl border-l-4 border-orange-500">
+                <p class="text-[10px] text-gray-500 uppercase tracking-wider font-bold">Flash Sales</p>
+                <h3 id="stat-sales" class="text-xl font-black text-gray-800 mt-1">0</h3>
+            </div>
+            <div class="glass-panel p-4 rounded-2xl border-l-4 border-purple-500">
+                <p class="text-[10px] text-gray-500 uppercase tracking-wider font-bold">Total Items</p>
+                <h3 id="stat-total" class="text-xl font-black text-gray-800 mt-1">0</h3>
+            </div>
         </div>
 
-        <!-- Empty States for Other Tabs (Hidden) -->
-        <div class="empty-state" id="empty-uang" style="display:none;">
-            <div class="empty-icon">💰</div>
-            <div class="empty-title">Data Kosong: Uang & Crypto</div>
-            <div class="empty-desc">Belum ada data airdrop atau reward dari AI Agent.</div>
-        </div>
-        <div class="empty-state" id="empty-bug" style="display:none;">
-            <div class="empty-icon">️</div>
-            <div class="empty-title">Data Kosong: Bug Bounty</div>
-            <div class="empty-desc">Belum ada laporan vulnerability dari security agent.</div>
-        </div>
-        <div class="empty-state" id="empty-kontrol" style="display:none;">
-            <div class="empty-icon">⚙️</div>
-            <div class="empty-title">Kontrol & Logs</div>
-            <div class="empty-desc">Sistem berjalan normal. Tidak ada error tercatat.</div>
+        <!-- DATA CONTAINER -->
+        <div id="data-container" class="space-y-4 min-h-[300px]">
+            <div class="animate-pulse space-y-4">
+                <div class="h-48 bg-gray-200 rounded-2xl"></div>
+                <div class="h-48 bg-gray-200 rounded-2xl"></div>
+            </div>
         </div>
 
-        <!-- Sample Card (Hidden, for demo) -->
-        <div class="card" id="demo-card">
-            <div class="card-header">
-                <span class="badge">DEMO MODE</span>
-                <span style="color:#0066cc;font-weight:bold;">Rp 15.000.000</span>
-            </div>
-            <div class="card-title">Flash Sale iPhone 15 Pro</div>
-            <div class="card-desc">
-                AI Agent mendeteksi flash sale di Tokopedia dengan diskon 5 juta. 
-                Stok terbatas 10 unit. Waktu tersisa: 2 jam.
-            </div>
-            <button class="action-btn" onclick="alert('Ini hanya demo!')">AUTOFILL CHECKOUT</button>
-        </div>
-    </div>
+    </main>
 
     <script>
-        // Ultra Simple Tab Switching (No Dependencies)
-        function switchTab(tabName, element) {
-            // Update active tab styling
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            element.classList.add('active');
-            
-            // Hide all empty states and cards
-            document.querySelectorAll('.empty-state, .card').forEach(el => el.style.display = 'none');
-            
-            // Show corresponding empty state
-            const emptyEl = document.getElementById('empty-' + tabName);
-            if (emptyEl) {
-                emptyEl.style.display = 'block';
-            }
-            
-            // Update status
-            document.getElementById('status').innerText = 'Tab: ' + tabName.toUpperCase();
-        }
+        // ==========================================
+        // KONFIGURASI SUPABASE (DENGAN MAPPING KOLOM YANG BENAR)
+        // ==========================================
+        const SUPABASE_URL = "https://xnpxiddpfqolfqchtadw.supabase.co"; 
+        const SUPABASE_ANON_KEY = "sb_pub1shable_muxzmf57Ec9OPmLuM-kHw_h65thgMQ"; 
         
-        // Test Function
-        function testFunction() {
-            alert('✅ FUNGSI JAVASCRIPT BERHASIL!\n\nArtinya:\n1. HTML loaded\n2. CSS applied\n3. JS executed\n\nSekarang kita bisa lanjut connect ke Supabase!');
-            
-            // Show demo card as proof
-            document.querySelectorAll('.empty-state').forEach(el => el.style.display = 'none');
-            document.getElementById('demo-card').classList.add('visible');
-            document.getElementById('demo-card').style.display = 'block';
-        }
-        
-        // Auto-select Barang tab on load
-        window.onload = function() {
-            console.log('New Blue Edition Loaded Successfully!');
-        };
-    </script>
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+        let currentTab = 'barang';
+        let allData = [];
+
+        // ==========================================
+        // FUNGSI UTAMA: AMBIL DATA LIVE DARI SUPABASE
+        // ==========================================
+        async function fetchLiveData() {
+            const statusEl = document.getElementById('connection-status');
+            try {
+                statusEl.innerText = "Syncing Gold Data...";
+                statusEl.className = "text-[10px] font-mono text-yellow-600 animate-pulse font-bold";
+
+                // Ambil semua data dari table 'bounties'
+                const { data, error } = await supabase
+                    .from('bounties') 
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                allData = data || [];
+                updateStats(allData);
+                renderTab(currentTab);
+
+                statusEl.innerText = "● Live Connected";
+                statusEl.className = "text-[10px] font-mono text-[#0066cc] font-bold";
+                document.getElementById('last-update').innerText = new Date().toLocaleTimeString();
+
+            } catch (err) {
+                console.error("Supabase Error:", err);
+                statusEl.innerText = "⚠ Connection Failed";
+                statusEl.className = "text-[10px] font-mono text-red-500 font-bold";
+                
+                document.getElementById('data-container').innerHTML = `
+                    <div class="p-8 bg-red-50 border border-red-200 rounded-2xl text-center shadow-sm">
+                        <p class="text-red-600 font-bold text-lg mb-2">Gagal Mengambil Data Emas</p>
+                        <p class="text-xs text-red-500 font-mono break-all bg-red-100 p-2 rounded">${err.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // ==========================================
+        // RENDERING ENGINE (MAPPING KOLOM DB KE UI)
+        // ==========================================
+        function renderTab(tabName) {
+            currentTab = tabName;
+            
+            // Update Tombol Tab
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('tab-active');
+                btn.classList.add('bg-white', 'text-gray-600', 'border-gray-200');
+            });
+            const activeBtn = document.getElementById(`tab-${tabName}`);
+            if(activeBtn) {
+                activeBtn.classList.add('tab-active');
+                activeBtn.classList.remove('bg-white', 'text-gray-600', 'border-gray-200');
+            }
+
+            // Filter Data Berdasarkan Program/Kategori
+            const filteredData = allData.filter(item => {
+                const prog = (item.program || '').toLowerCase();
+                const analysis = item.ai_analysis ? JSON.stringify(item.ai_analysis).toLowerCase() : '';
+                
+                if (tabName === 'uang') return prog.includes('crypto') || prog.includes('finance') || analysis.includes('giveaway') || analysis.includes('airdrop');
+                if (tabName === 'bug') return prog.includes('hackerone') || prog.includes('stripe') || analysis.includes('xss') || analysis.includes('vulnerability');
+                if (tabName === 'barang') return prog.includes('shopee') || prog.includes('tokopedia') || prog.includes('electronics') || prog.includes('beauty');
+                if (tabName === 'kontrol') return true;
+                return true;
+            });
+
+            const container = document.getElementById('data-container');
+            
+            if (filteredData.length === 0) {
+                container.innerHTML = `
+                    <div class="p-10 text-center bg-white rounded-2xl border border-dashed border-gray-300 shadow-sm">
+                        <p class="text-gray-400 text-base font-medium">📭 Belum ada data untuk kategori "${tabName.toUpperCase()}"</p>
+                        <p class="text-xs text-gray-300 mt-1">AI Agent sedang fokus mencari target lain...</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Generate HTML Cards
+            let html = '';
+            filteredData.forEach(item => {
+                // Parsing AI Analysis JSON
+                let type = 'General';
+                let risk = 'Normal';
+                if (item.ai_analysis) {
+                    try {
+                        const analysis = typeof item.ai_analysis === 'string' ? JSON.parse(item.ai_analysis) : item.ai_analysis;
+                        type = analysis.type || analysis.concept || 'General';
+                        risk = analysis.risk_level || analysis.urgency || 'Normal';
+                    } catch(e) {}
+                }
+
+                // Tentukan Badge Warna
+                let badgeClass = 'badge-normal';
+                if (risk === 'Critical' || risk === 'High') badgeClass = 'badge-critical';
+                else if (risk === 'Medium') badgeClass = 'badge-high';
+
+                // Tentukan Text Tombol
+                let btnText = "LIHAT DETAIL";
+                let btnIcon = "👁️";
+                if (tabName === 'barang') { btnText = "CHECKOUT SEKARANG"; btnIcon = ""; }
+                if (tabName === 'uang') { btnText = "KLAIM REWARD"; btnIcon = "⚡"; }
+                if (tabName === 'bug') { btnText = "COPY REPORT"; btnIcon = "📋"; }
+
+                html += `
+                <article class="glass-panel p-5 rounded-2xl relative overflow-hidden group hover:shadow-xl transition-all duration-300 border-l-4 ${badgeClass === 'badge-critical' ? 'border-red-500' : 'border-[#0066cc]'}">
+                    
+                    <div class="flex justify-between items-start mb-3">
+                        <span class="${badgeClass} status-badge">${risk.toUpperCase()}</span>
+                        <span class="text-sm font-black text-[#0066cc]">${item.reward || 'Rp 0'}</span>
+                    </div>
+
+                    <h3 class="text-lg font-black text-gray-900 mb-2 leading-snug">${item.title || item.program || 'Untitled Target'}</h3>
+                    
+                    <p class="text-sm text-gray-600 mb-4 line-clamp-3">${item.description || type + ' detected by AI Agent.'}</p>
+
+                    <div class="bg-gray-50 rounded-xl p-3 mb-4 border border-gray-100">
+                        <p class="text-[9px] uppercase text-gray-400 font-bold mb-1 tracking-wider">🧠 AI Analysis:</p>
+                        <p class="text-xs text-gray-700 font-mono whitespace-pre-wrap leading-relaxed">${JSON.stringify(item.ai_analysis, null, 2) || 'No detailed analysis available.'}</p>
+                    </div>
+
+                    <div class="flex items-center gap-3 text-[10px] text-gray-400 mb-4 border-t border-gray-100 pt-3">
+                        <span class="flex items-center gap-1">🎯 ${item.program || 'Unknown Program'}</span>
+                        <span class="flex items-center gap-1">📅 ${new Date(item.created_at).toLocaleDateString()}</span>
+                    </div>
+
+                    <button onclick="handleAction('${item.id}', '${item.target_url || '#'}', '${tabName}')" 
+                            class="btn-primary w-full py-3.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow-md shadow-blue-200">
+                        <span>${btnIcon}</span> ${btnText}
+                    </button>
+                </article>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // ==========================================
+        // LOGIKA EKSEKUSI
+        // ==========================================
+        function handleAction(id, url, type) {
+            if (!url || url === '#') {
+                alert("️ AI belum menemukan URL target valid.");
+                return;
+            }
+
+            if (type === 'bug') {
+                const item = allData.find(d => d.id === id);
+                const reportText = `BUG REPORT: ${item.title}\n\nPROGRAM: ${item.program}\n\nANALYSIS:\n${JSON.stringify(item.ai_analysis)}\n\nURL: ${url}`;
+                navigator.clipboard.writeText(reportText).then(() => {
+                    alert("✅ Laporan bug berhasil disalin!");
+                });
+            } else {
+                window.open(url, '_blank');
+            }
+        }
+
+        function updateStats(data) {
+            const totalPotential = data.reduce((sum, item) => {
+                const val = String(item.reward || '0').replace(/[^0-9]/g, '');
+                return sum + (parseInt(val) || 0);
+            }, 0);
+            
+            const criticalCount = data.filter(i => {
+                const a = i.ai_analysis;
+                return a && (a.risk_level === 'Critical' || a.urgency === 'High');
+            }).length;
+
+            const salesCount = data.filter(i => 
+                (i.program || '').toLowerCase().includes('shopee') || 
+                (i.program || '').toLowerCase().includes('tokopedia')
+            ).length;
+
+            document.getElementById('stat-potential').innerText = `Rp ${totalPotential.toLocaleString('id-ID')}`;
+            document.getElementById('stat-critical').innerText = criticalCount;
+            document.getElementById('stat-sales').innerText = salesCount;
+            document.getElementById('stat-total').innerText = data.length;
+        }
+
+        function switchTab(tab) {
+            renderTab(tab);
+        }
+
+        // INITIALIZATION
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchLiveData();
+            setInterval(fetchLiveData, 60000); // Refresh tiap 1 menit
+        });
+    </script>
 </body>
 </html>
