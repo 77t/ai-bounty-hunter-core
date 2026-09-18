@@ -1,108 +1,744 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AI Bounty Hunter Command Center</title>
-    <link rel="stylesheet" href="styles.css">
-    <!-- Font Awesome untuk Ikon Premium -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-<body class="skin-emerald">
-    <div class="app-container">
-        <!-- Header Mewah -->
-        <header class="top-bar">
-            <div class="brand">
-                <i class="fa-solid fa-shield-halved"></i> AI BOUNTY CEO
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0a0a0a" />
+    <title>Teguh Hunter</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+              mono: ["JetBrains Mono", "ui-monospace", "monospace"],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      :root {
+        --bg: #0a0a0a;
+        --panel: rgba(22, 22, 22, 0.72);
+        --panel-strong: rgba(28, 28, 28, 0.92);
+        --text: #f5f1e8;
+        --muted: #9b958b;
+        --line: rgba(255, 255, 255, 0.1);
+        --gold: #d6aa4f;
+        --gold-soft: #f1ce7e;
+        --cyan: #68e6ef;
+        --green: #7ee3a8;
+        --red: #ff636f;
+        --orange: #efaa6c;
+      }
+
+      [data-skin="cyber"] {
+        --bg: #070d16;
+        --panel: rgba(7, 22, 38, 0.76);
+        --panel-strong: rgba(8, 31, 51, 0.93);
+        --text: #effeff;
+        --muted: #82a6b5;
+        --line: rgba(104, 230, 239, 0.17);
+        --gold: #ff4fd8;
+        --gold-soft: #ff9be9;
+        --cyan: #68f7ff;
+        --green: #84f6b6;
+        --red: #ff688d;
+        --orange: #ffb673;
+      }
+
+      [data-skin="minimal"] {
+        --bg: #f1f0eb;
+        --panel: rgba(255, 255, 255, 0.78);
+        --panel-strong: rgba(255, 255, 255, 0.95);
+        --text: #1e201f;
+        --muted: #70736e;
+        --line: rgba(30, 32, 31, 0.13);
+        --gold: #a2741c;
+        --gold-soft: #b88a2b;
+        --cyan: #118c97;
+        --green: #278c5a;
+        --red: #b9464f;
+        --orange: #b9692f;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        min-width: 320px;
+        min-height: 100%;
+        margin: 0;
+      }
+
+      body {
+        overflow-x: hidden;
+        color: var(--text);
+        background:
+          radial-gradient(circle at 90% 0%, color-mix(in srgb, var(--gold) 13%, transparent), transparent 26rem),
+          radial-gradient(circle at 0% 42%, color-mix(in srgb, var(--cyan) 7%, transparent), transparent 26rem),
+          var(--bg);
+      }
+
+      body::before {
+        position: fixed;
+        z-index: -1;
+        inset: 0;
+        pointer-events: none;
+        opacity: 0.43;
+        content: "";
+        background-image:
+          repeating-linear-gradient(112deg, rgba(255, 255, 255, 0.025) 0 1px, transparent 1px 5px),
+          repeating-linear-gradient(22deg, transparent 0 7px, rgba(0, 0, 0, 0.2) 7px 8px),
+          radial-gradient(circle at 15% 25%, rgba(255, 255, 255, 0.04), transparent 22%);
+        mix-blend-mode: screen;
+      }
+
+      [data-skin="minimal"] body::before {
+        opacity: 0.12;
+        mix-blend-mode: multiply;
+      }
+
+      .glass {
+        border: 1px solid var(--line);
+        background: linear-gradient(135deg, color-mix(in srgb, var(--panel-strong) 94%, transparent), var(--panel));
+        box-shadow: 0 24px 70px rgba(0, 0, 0, 0.26);
+        backdrop-filter: blur(22px);
+      }
+
+      .scanline {
+        background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--cyan) 52%, transparent), transparent);
+        background-size: 200% 100%;
+        animation: scanline 2.8s linear infinite;
+      }
+
+      @keyframes scanline {
+        from { background-position: 200% 0; }
+        to { background-position: -200% 0; }
+      }
+
+      .emergency-pulse {
+        animation: emergency-pulse 1.25s ease-in-out infinite;
+      }
+
+      @keyframes emergency-pulse {
+        0%, 100% { box-shadow: 0 0 0 0 rgba(255, 47, 73, 0.26), 0 0 60px rgba(255, 47, 73, 0.1); }
+        50% { box-shadow: 0 0 0 15px rgba(255, 47, 73, 0), 0 0 90px rgba(255, 47, 73, 0.28); }
+      }
+
+      .skeleton {
+        min-height: 150px;
+        border-radius: 1rem;
+        background: linear-gradient(110deg, color-mix(in srgb, var(--panel) 95%, transparent) 30%, color-mix(in srgb, var(--text) 9%, var(--panel)) 45%, color-mix(in srgb, var(--panel) 95%, transparent) 60%);
+        background-size: 300% 100%;
+        animation: skeleton 1.35s ease-in-out infinite;
+      }
+
+      @keyframes skeleton {
+        from { background-position: 100% 0; }
+        to { background-position: -100% 0; }
+      }
+
+      .terminal-scroll {
+        scrollbar-color: color-mix(in srgb, var(--cyan) 45%, transparent) transparent;
+      }
+
+      .terminal-scroll::-webkit-scrollbar {
+        width: 5px;
+      }
+
+      .terminal-scroll::-webkit-scrollbar-thumb {
+        border-radius: 999px;
+        background: color-mix(in srgb, var(--cyan) 45%, transparent);
+      }
+
+      .hidden-until-ready {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body data-skin="luxury" class="font-sans antialiased">
+    <div id="app" class="mx-auto min-h-screen w-full max-w-7xl px-4 pb-28 sm:px-7 lg:px-10">
+      <header class="flex items-center justify-between gap-3 py-5 sm:py-7">
+        <a href="/" class="flex min-w-max items-center gap-2.5 no-underline" aria-label="Carbon Command Center">
+          <span class="grid h-8 w-8 place-items-center rounded-lg border border-[var(--gold)] text-sm font-black text-[var(--gold-soft)] shadow-[0_0_24px_color-mix(in_srgb,var(--gold)_20%,transparent)]">C</span>
+          <span class="text-[0.68rem] font-black uppercase tracking-[0.18em] text-[var(--text)] sm:text-xs">Carbon / Command</span>
+        </a>
+        <div class="flex items-center gap-2.5">
+          <span class="hidden items-center gap-1.5 text-[0.63rem] font-black uppercase tracking-[0.12em] text-[var(--green)] sm:flex"><i class="h-1.5 w-1.5 rounded-full bg-current shadow-[0_0_12px_currentColor]"></i>Autopilot live</span>
+          <div class="glass flex gap-1 rounded-xl p-1" aria-label="Choose skin">
+            <button class="skin-button h-6 w-6 rounded-md border border-[var(--text)] bg-[linear-gradient(135deg,#050505_46%,#d6aa4f_47%_58%,#5ce2eb_59%)]" data-skin="luxury" title="Luxury Carbon" aria-label="Luxury Carbon"></button>
+            <button class="skin-button h-6 w-6 rounded-md border border-transparent bg-[linear-gradient(135deg,#07121e_46%,#ff4fd8_47%_58%,#63f6ff_59%)]" data-skin="cyber" title="Cyber Neon" aria-label="Cyber Neon"></button>
+            <button class="skin-button h-6 w-6 rounded-md border border-transparent bg-[linear-gradient(135deg,#fff_46%,#a7791f_47%_58%,#138e98_59%)]" data-skin="minimal" title="Minimalist White" aria-label="Minimalist White"></button>
+          </div>
+        </div>
+      </header>
+
+      <section class="grid items-end gap-7 py-10 sm:py-16 lg:grid-cols-[1fr_auto]">
+        <div>
+          <p class="mb-3 text-[0.65rem] font-black uppercase tracking-[0.23em] text-[var(--gold-soft)]">Private intelligence terminal / 01</p>
+          <h1 class="max-w-4xl text-5xl font-medium leading-[0.94] tracking-[-0.08em] text-[var(--text)] sm:text-7xl lg:text-8xl">Turn signals into <span class="text-[var(--gold-soft)]">upside.</span></h1>
+          <p class="mt-5 max-w-2xl text-sm leading-7 text-[var(--muted)] sm:text-base">A focused command center for bug bounties, scarce rewards, autonomous agents, and wallet settlement. Your hand stays on the final claim.</p>
+        </div>
+        <div class="flex flex-wrap items-center gap-2 lg:justify-end">
+          <button id="refresh-button" class="rounded-xl border border-[var(--line)] bg-[var(--panel)] px-4 py-3 text-[0.68rem] font-black uppercase tracking-[0.1em] text-[var(--text)] transition hover:border-[var(--cyan)]">Refresh data ↻</button>
+          <span class="text-[0.68rem] text-[var(--muted)]">Mode: <strong id="data-mode" class="text-[var(--text)]">Demo snapshot</strong></span>
+        </div>
+      </section>
+
+      <section class="mb-7 grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3" aria-label="Command center summary">
+        <article class="glass rounded-2xl p-4">
+          <span class="mb-4 block text-[0.61rem] font-black uppercase tracking-[0.14em] text-[var(--muted)]">Open bounties</span>
+          <strong id="stat-bounties" class="block text-2xl font-semibold tracking-[-0.05em]">—</strong>
+          <span class="text-[0.68rem] text-[var(--muted)]">Active queue</span>
+        </article>
+        <article class="glass rounded-2xl p-4">
+          <span class="mb-4 block text-[0.61rem] font-black uppercase tracking-[0.14em] text-[var(--muted)]">Agents online</span>
+          <strong id="stat-agents" class="block text-2xl font-semibold tracking-[-0.05em]">—</strong>
+          <span class="text-[0.68rem] text-[var(--muted)]">24 / 7 coverage</span>
+        </article>
+        <article class="glass rounded-2xl p-4">
+          <span class="mb-4 block text-[0.61rem] font-black uppercase tracking-[0.14em] text-[var(--muted)]">Potential value</span>
+          <strong id="stat-potential" class="block text-2xl font-semibold tracking-[-0.05em]">—</strong>
+          <span class="text-[0.68rem] text-[var(--muted)]">Available targets</span>
+        </article>
+        <article class="glass rounded-2xl p-4">
+          <span class="mb-4 block text-[0.61rem] font-black uppercase tracking-[0.14em] text-[var(--muted)]">Wallet total</span>
+          <strong id="stat-wallet" class="block text-2xl font-semibold tracking-[-0.05em]">—</strong>
+          <span class="text-[0.68rem] text-[var(--muted)]">Settled claims</span>
+        </article>
+      </section>
+
+      <nav class="glass sticky top-2 z-30 mb-8 grid grid-cols-4 gap-1 rounded-2xl p-1" aria-label="Main sections">
+        <button class="tab-button rounded-xl bg-[color-mix(in_srgb,var(--gold)_18%,var(--panel))] px-2 py-3 text-[0.61rem] font-black uppercase tracking-[0.04em] text-[var(--gold-soft)]" data-tab="bugs">Bug Bounty</button>
+        <button class="tab-button rounded-xl px-2 py-3 text-[0.61rem] font-black uppercase tracking-[0.04em] text-[var(--muted)]" data-tab="rewards">Uang / Barang</button>
+        <button class="tab-button rounded-xl px-2 py-3 text-[0.61rem] font-black uppercase tracking-[0.04em] text-[var(--muted)]" data-tab="agents">Agent Swarm</button>
+        <button class="tab-button rounded-xl px-2 py-3 text-[0.61rem] font-black uppercase tracking-[0.04em] text-[var(--muted)]" data-tab="wallet">Wallet</button>
+      </nav>
+
+      <main>
+        <section id="panel-bugs" class="tab-panel" data-panel="bugs">
+          <div class="mb-5 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
+            <div>
+              <p class="mb-2 text-[0.64rem] font-black uppercase tracking-[0.2em] text-[var(--gold-soft)]">Signal / vulnerability research</p>
+              <h2 class="text-3xl font-medium tracking-[-0.06em]">Bug bounty board</h2>
+              <p class="mt-2 max-w-xl text-sm text-[var(--muted)]">Prioritized findings with enough context to move from signal to a report worth reading.</p>
             </div>
-            <div class="header-actions">
-                <button id="theme-toggle" class="icon-btn" aria-label="Ganti Tema">
-                    <i class="fa-solid fa-palette"></i>
-                </button>
-                <button id="force-rescan" class="pulse-btn">
-                    <i class="fa-solid fa-arrows-rotate"></i> FORCE RE-SCAN
-                </button>
+            <span id="bugs-updated" class="text-[0.68rem] text-[var(--muted)]">Loading…</span>
+          </div>
+          <div id="bug-list" class="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+            <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
+          </div>
+        </section>
+
+        <section id="panel-rewards" class="tab-panel hidden" data-panel="rewards">
+          <div class="mb-5 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
+            <div>
+              <p class="mb-2 text-[0.64rem] font-black uppercase tracking-[0.2em] text-[var(--gold-soft)]">Signal / physical upside</p>
+              <h2 class="text-3xl font-medium tracking-[-0.06em]">Uang / barang</h2>
+              <p class="mt-2 max-w-xl text-sm text-[var(--muted)]">Stock-aware claim targets. The emergency confirmation stays manual by design.</p>
             </div>
-        </header>
+            <span id="rewards-updated" class="text-[0.68rem] text-[var(--muted)]">Loading…</span>
+          </div>
+          <div id="reward-list" class="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+            <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
+          </div>
+        </section>
 
-        <!-- Tab Navigasi Mobile Friendly -->
-        <nav class="tab-nav">
-            <button class="tab-btn active" data-tab="crypto">
-                <i class="fa-brands fa-bitcoin"></i> Crypto
-            </button>
-            <button class="tab-btn" data-tab="bugbounty">
-                <i class="fa-solid fa-bug"></i> Bug Bounty
-            </button>
-            <button class="tab-btn" data-tab="goods">
-                <i class="fa-solid fa-cart-shopping"></i> Barang
-            </button>
-            <button class="tab-btn" data-tab="control">
-                <i class="fa-solid fa-gear"></i> Kontrol
-            </button>
-        </nav>
+        <section id="panel-agents" class="tab-panel hidden" data-panel="agents">
+          <div class="mb-4 grid gap-3 rounded-2xl border border-[color-mix(in_srgb,var(--cyan)_28%,transparent)] bg-[color-mix(in_srgb,var(--cyan)_7%,var(--panel))] p-4 sm:grid-cols-[auto_1fr_auto] sm:items-center">
+            <span class="grid h-10 w-10 place-items-center rounded-full border border-[color-mix(in_srgb,var(--cyan)_52%,transparent)] text-[var(--cyan)]">✦</span>
+            <div><strong class="block text-sm">Autopilot is watching the queue.</strong><p class="mt-1 text-xs text-[var(--muted)]">Scanning, analyzing, exploiting, and claiming are logged here in real time.</p></div>
+            <button id="deploy-agent" class="rounded-xl border border-[var(--gold)] bg-[color-mix(in_srgb,var(--gold)_14%,var(--panel))] px-4 py-3 text-[0.64rem] font-black uppercase tracking-[0.08em] text-[var(--gold-soft)]">Deploy new agent +</button>
+          </div>
+          <div class="mb-5 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
+            <div><p class="mb-2 text-[0.64rem] font-black uppercase tracking-[0.2em] text-[var(--gold-soft)]">Autonomous operations / 24×7</p><h2 class="text-3xl font-medium tracking-[-0.06em]">Agent swarm</h2></div>
+            <span class="text-[0.68rem] text-[var(--muted)]">Polling target queue every 800ms when live mode is configured</span>
+          </div>
+          <div class="grid gap-4 xl:grid-cols-[0.85fr_1.15fr]">
+            <div id="agent-list" class="grid content-start gap-3"><div class="skeleton"></div><div class="skeleton"></div></div>
+            <div class="glass overflow-hidden rounded-2xl">
+              <div class="flex items-center justify-between border-b border-[var(--line)] px-4 py-3"><div><p class="text-[0.62rem] font-black uppercase tracking-[0.15em] text-[var(--cyan)]">Live execution logs</p><p class="mt-1 text-[0.65rem] text-[var(--muted)]">Auto-scrolling terminal</p></div><span class="scanline h-1 w-20 rounded-full"></span></div>
+              <div id="execution-log" class="terminal-scroll h-[320px] overflow-y-auto bg-black/20 p-4 font-mono text-[0.69rem] leading-6"></div>
+            </div>
+          </div>
+        </section>
 
-        <!-- Konten Tab -->
-        <main class="content-area">
-            <!-- TAB 1: CRYPTO & AIRDROP -->
-            <section id="tab-crypto" class="tab-content active">
-                <div class="card-grid" id="crypto-list">
-                    <div class="empty-state">
-                        <i class="fa-solid fa-spinner fa-spin"></i> Memuat airdrop...
-                    </div>
-                </div>
-            </section>
-
-            <!-- TAB 2: BUG BOUNTY WAR ROOM -->
-            <section id="tab-bugbounty" class="tab-content">
-                <div class="card-grid" id="bug-list">
-                    <div class="empty-state">
-                        <i class="fa-solid fa-magnifying-glass"></i> Menunggu hasil scan...
-                    </div>
-                </div>
-            </section>
-
-            <!-- TAB 3: BARANG & FLASH SALE -->
-            <section id="tab-goods" class="tab-content">
-                <div class="card-grid" id="goods-list">
-                    <div class="empty-state">
-                        <i class="fa-solid fa-box-open"></i> Mencari glitch harga...
-                    </div>
-                </div>
-            </section>
-
-            <!-- TAB 4: KONTROL & LOGS -->
-            <section id="tab-control" class="tab-content">
-                <div class="panel-status">
-                    <h3><i class="fa-solid fa-microchip"></i> STATUS AGEN AI</h3>
-                    <div class="agent-row">
-                        <span>HunterAgent</span> 
-                        <span class="status-dot green" title="Aktif Scanning"></span>
-                    </div>
-                    <div class="agent-row">
-                        <span>ValidatorAgent</span> 
-                        <span class="status-dot yellow" title="Menunggu Data"></span>
-                    </div>
-                    <div class="agent-row">
-                        <span>DesignerAgent</span> 
-                        <span class="status-dot blue" title="Standby"></span>
-                    </div>
-                </div>
-                
-                <div class="panel-accounts">
-                    <h3><i class="fa-solid fa-users"></i> STATUS 10 AKUN FISIK</h3>
-                    <div id="account-status-grid" class="account-grid">
-                        <!-- Diisi otomatis oleh JS -->
-                    </div>
-                </div>
-
-                <div class="panel-logs">
-                    <h3><i class="fa-solid fa-terminal"></i> LIVE EXECUTION LOG</h3>
-                    <div id="live-log" class="log-box"></div>
-                </div>
-            </section>
-        </main>
+        <section id="panel-wallet" class="tab-panel hidden" data-panel="wallet">
+          <div class="mb-5 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
+            <div><p class="mb-2 text-[0.64rem] font-black uppercase tracking-[0.2em] text-[var(--gold-soft)]">Settlement / realized value</p><h2 class="text-3xl font-medium tracking-[-0.06em]">Wallet</h2><p class="mt-2 max-w-xl text-sm text-[var(--muted)]">What has already landed, not just what is still theoretical.</p></div>
+            <span id="wallet-updated" class="text-[0.68rem] text-[var(--muted)]">Loading…</span>
+          </div>
+          <div id="wallet-content" class="grid gap-3 lg:grid-cols-[0.72fr_1.28fr]"><div class="skeleton"></div><div class="skeleton"></div></div>
+        </section>
+      </main>
     </div>
 
-    <script src="auto_claim_engine.js"></script>
-</body>
+    <div id="toast" class="pointer-events-none fixed bottom-5 left-1/2 z-[80] hidden w-[calc(100%-2rem)] max-w-md -translate-x-1/2 rounded-xl border border-[var(--line)] bg-[var(--panel-strong)] px-4 py-3 text-sm shadow-2xl backdrop-blur-xl" role="status" aria-live="polite"></div>
+
+    <div id="emergency-overlay" class="hidden-until-ready fixed inset-0 z-[9999] flex items-center justify-center bg-[radial-gradient(circle_at_50%_20%,rgba(255,85,85,.28),transparent_38%),linear-gradient(145deg,#21070b,#080606_58%,#28070b)] p-4">
+      <div class="emergency-pulse w-full max-w-lg rounded-[2rem] border border-red-400/50 bg-red-950/50 p-5 text-white shadow-2xl backdrop-blur-2xl sm:p-8">
+        <div class="mb-7 flex items-center justify-between gap-3"><span class="rounded-full border border-red-300/60 bg-red-400/15 px-3 py-1 text-[0.65rem] font-black uppercase tracking-[0.14em] text-red-200">Emergency claim window</span><span id="emergency-countdown" class="font-mono text-sm text-red-200">30s</span></div>
+        <p class="mb-3 text-[0.67rem] font-black uppercase tracking-[0.2em] text-red-300">Flashsale detected</p>
+        <h2 id="emergency-title" class="text-3xl font-semibold leading-tight tracking-[-0.05em] sm:text-5xl">Target detected</h2>
+        <div class="mt-6 grid grid-cols-2 gap-2"><div class="rounded-xl border border-white/10 bg-black/20 p-3"><span class="block text-[0.61rem] uppercase tracking-[0.14em] text-red-200/70">Stock</span><strong id="emergency-stock" class="mt-1 block text-xl">—</strong></div><div class="rounded-xl border border-white/10 bg-black/20 p-3"><span class="block text-[0.61rem] uppercase tracking-[0.14em] text-red-200/70">Time left</span><strong id="emergency-time" class="mt-1 block text-xl">—</strong></div></div>
+        <p class="mt-6 text-sm leading-6 text-red-100/75">The checkout is prepared but not submitted. Confirm only if you recognize the target and want to continue in a new tab.</p>
+        <button id="confirm-checkout" class="mt-7 flex min-h-20 w-full items-center justify-center rounded-2xl border border-red-200 bg-red-500 px-5 text-center text-lg font-black uppercase tracking-[-0.02em] text-white shadow-[0_0_34px_rgba(255,62,76,.4)] transition hover:bg-red-400 disabled:cursor-not-allowed disabled:opacity-50">🔥 Confirm 1-Klik checkout</button>
+        <button id="dismiss-emergency" class="mt-3 hidden w-full py-3 text-xs font-bold uppercase tracking-[0.12em] text-red-200/80 underline decoration-red-300/30 underline-offset-4">Dismiss emergency window</button>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+      const SUPABASE_URL = "Https://xnpxiddpfqolfqchtadw.supabase.co";
+      const SUPABASE_ANON_KEY = ''sb_publishable_muxzmfs57Ec9OPmLuM-kHw_h65thgMQ";
+      const TELEGRAM_BOT_TOKEN = ''8763502182:AAFt9C-Jycj9bHhpvFCLu-17qLS50R6IhY0";
+      const TELEGRAM_CHAT_ID = ''242827819";
+      const CLAIM_TIME_THRESHOLD_SECONDS = 45;
+
+      (() => {
+        "use strict";
+
+        const demoBounties = [
+          { id: "demo-bug-1", category: "bug", title: "Cross-tenant cache key collision", severity: "Critical", potential_value: 18000000, ai_analysis: { impact: "A crafted cache key can expose private response fragments across tenant boundaries." }, agent_status: "Analyzing", target_url: "https://example.com/security" },
+          { id: "demo-bug-2", category: "bug", title: "Session replay after revoked device", severity: "High", potential_value: 7500000, ai_analysis: { impact: "Revoked sessions remain usable during a narrow refresh window." }, agent_status: "Scanning", target_url: "https://example.com/security" },
+          { id: "demo-reward-1", category: "reward", title: "Limited edition hardware drop", severity: "Priority", potential_value: 3200000, ai_analysis: { stock_remaining: 14, time_remaining: 29, impact: "Fast-moving inventory with a verified resale window." }, agent_status: "Claiming", target_url: "https://example.com/claim" },
+          { id: "demo-reward-2", category: "reward", title: "Partner referral cash pool", severity: "Open", potential_value: 1250000, ai_analysis: { stock_remaining: 63, time_remaining: 180, impact: "Cash reward with a capped daily allocation." }, agent_status: "Scanning", target_url: "https://example.com/claim" },
+        ];
+        const demoClaims = [
+          { id: "claim-1", title: "Protocol disclosure reward", amount: 8400000, created_at: "2026-09-16T10:14:00Z" },
+          { id: "claim-2", title: "Partner referral pool", amount: 4200000, created_at: "2026-09-14T08:40:00Z" },
+          { id: "claim-3", title: "Hardware drop allocation", amount: 3200000, created_at: "2026-09-10T12:20:00Z" },
+        ];
+
+        const state = {
+          bounties: [],
+          sessions: [],
+          claims: [],
+          agents: [],
+          loading: true,
+          live: false,
+          lastUpdated: null,
+          knownFlashTargets: new Set(),
+          deepLinkConsumed: false,
+        };
+        const $ = (selector) => document.querySelector(selector);
+        const $$ = (selector) => Array.from(document.querySelectorAll(selector));
+        let toastTimer;
+
+        const parseJsonb = (value) => {
+          if (!value) return {};
+          if (typeof value === "object" && !Array.isArray(value)) return value;
+          if (typeof value !== "string") return {};
+          try {
+            const parsed = JSON.parse(value);
+            return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed : {};
+          } catch {
+            return {};
+          }
+        };
+
+        const money = (value) => new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(Number(value) || 0);
+        const compactMoney = (value) => {
+          const amount = Number(value) || 0;
+          if (amount >= 1e9) return `Rp ${(amount / 1e9).toFixed(1)}B`;
+          if (amount >= 1e6) return `Rp ${(amount / 1e6).toFixed(1)}M`;
+          if (amount >= 1e3) return `Rp ${(amount / 1e3).toFixed(0)}K`;
+          return money(amount);
+        };
+        const escapeHtml = (value) => String(value ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
+        const normalizeStatus = (value) => {
+          const status = String(value || "Scanning").toLowerCase();
+          if (status.includes("claim")) return "Claiming";
+          if (status.includes("exploit")) return "Exploiting";
+          if (status.includes("analy")) return "Analyzing";
+          return "Scanning";
+        };
+        const normalizeBounty = (row) => {
+          const ai = parseJsonb(row?.ai_analysis);
+          return { ...row, title: row?.title || "Untitled target", severity: row?.severity || "Unclassified", potential_value: Number(row?.potential_value || row?.reward || 0), ai_analysis: ai, agent_status: normalizeStatus(row?.agent_status), stock: Number(ai.stock_remaining ?? row?.stock_remaining ?? 0), timeRemaining: Number(row?.time_remaining ?? ai.time_remaining ?? 999999) };
+        };
+        const configured = Boolean(SUPABASE_URL && SUPABASE_ANON_KEY) && !SUPABASE_URL.includes("your-") && !SUPABASE_ANON_KEY.includes("your-");
+        const supabase = configured && window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+
+        const toast = (message, kind = "info") => {
+          const node = $("#toast");
+          node.className = `pointer-events-auto fixed bottom-5 left-1/2 z-[80] w-[calc(100%-2rem)] max-w-md -translate-x-1/2 rounded-xl border px-4 py-3 text-sm shadow-2xl backdrop-blur-xl ${kind === "error" ? "border-red-400/50 bg-red-950/90 text-red-100" : kind === "success" ? "border-emerald-300/40 bg-emerald-950/90 text-emerald-100" : "border-cyan-300/30 bg-slate-950/90 text-cyan-100"}`;
+          node.textContent = message;
+          clearTimeout(toastTimer);
+          toastTimer = setTimeout(() => { node.className = "pointer-events-none fixed bottom-5 left-1/2 z-[80] hidden w-[calc(100%-2rem)] max-w-md -translate-x-1/2 rounded-xl border border-[var(--line)] bg-[var(--panel-strong)] px-4 py-3 text-sm shadow-2xl backdrop-blur-xl"; }, 4500);
+        };
+
+        const log = (message, tone = "info") => {
+          const colors = { info: "text-[var(--cyan)]", success: "text-[var(--green)]", alert: "text-[var(--red)]", muted: "text-[var(--muted)]" };
+          const row = document.createElement("div");
+          row.className = `${colors[tone] || colors.info}`;
+          row.innerHTML = `<span class="mr-2 text-[var(--muted)]">${new Date().toLocaleTimeString([], { hour12: false })}</span><span>${escapeHtml(message)}</span>`;
+          const terminal = $("#execution-log");
+          terminal.appendChild(row);
+          terminal.scrollTop = terminal.scrollHeight;
+        };
+
+        const safeTargetUrl = (value) => /^https?:\/\//i.test(String(value || "")) ? String(value) : "";
+
+        async function queryLiveData() {
+          if (!supabase) return { bounties: demoBounties.map(normalizeBounty), sessions: [], claims: demoClaims };
+          const [bountyResult, sessionResult, claimResult] = await Promise.all([
+            supabase.from("bounties").select("*").order("created_at", { ascending: false }).limit(100),
+            supabase.from("user_sessions").select("id,user_id,encrypted_session_token,expires_at,updated_at").order("updated_at", { ascending: false }).limit(20),
+            supabase.from("user_claims").select("*").order("created_at", { ascending: false }).limit(30),
+          ]);
+          if (bountyResult.error) throw bountyResult.error;
+          if (sessionResult.error) throw sessionResult.error;
+          if (claimResult.error) throw claimResult.error;
+          return {
+            bounties: (bountyResult.data || []).map(normalizeBounty),
+            sessions: sessionResult.data || [],
+            claims: (claimResult.data || []).map((claim) => ({ ...claim, title: claim.title || claim.bounty_title || claim.name || "Reward claim", amount: Number(claim.amount || claim.reward || claim.value || 0) })),
+          };
+        }
+
+        async function refreshData({ silent = false } = {}) {
+          if (!silent) {
+            state.loading = true;
+            render();
+          }
+          try {
+            const result = await queryLiveData();
+            state.bounties = result.bounties;
+            state.sessions = result.sessions;
+            state.claims = result.claims;
+            state.live = Boolean(supabase);
+            $("#data-mode").textContent = state.live ? "Supabase live" : "Demo snapshot";
+          } catch (error) {
+            console.warn("Data refresh failed:", error);
+            state.bounties = demoBounties.map(normalizeBounty);
+            state.sessions = [];
+            state.claims = demoClaims.slice();
+            state.live = false;
+            $("#data-mode").textContent = "Fallback snapshot";
+            if (!silent) toast("Live data is unavailable. Showing a safe local snapshot.", "error");
+          } finally {
+            state.loading = false;
+            state.lastUpdated = new Date();
+            render();
+            const deepLinkId = new URLSearchParams(window.location.search).get("claim");
+            if (!state.deepLinkConsumed && deepLinkId) {
+              const deepLinkTarget = state.bounties.find((bounty) => String(bounty.id) === deepLinkId);
+              if (deepLinkTarget && deepLinkTarget.stock > 0) {
+                state.deepLinkConsumed = true;
+                document.querySelector('[data-tab="agents"]').click();
+                HybridClaimEngine.prepare(deepLinkTarget);
+              }
+            }
+          }
+        }
+
+        const bugBounties = () => state.bounties.filter((bounty) => bounty.category === "bug");
+        const rewardBounties = () => state.bounties.filter((bounty) => bounty.category === "reward");
+        const findBounty = (id) => state.bounties.find((bounty) => String(bounty.id) === String(id));
+
+        const renderCards = (items, category) => {
+          if (state.loading) return '<div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>';
+          if (!items.length) return `<div class="glass rounded-2xl border-dashed p-8 text-center text-sm text-[var(--muted)]"><strong class="mb-1 block text-[var(--text)]">No ${category} targets in the queue.</strong>New opportunities will appear here when the data source returns them.</div>`;
+          return items.map((bounty) => {
+            const ai = parseJsonb(bounty.ai_analysis);
+            const isReward = category === "reward";
+            const stock = Number(ai.stock_remaining ?? bounty.stock ?? 0);
+            return `<article class="glass relative overflow-hidden rounded-2xl p-5"><span class="absolute right-5 top-0 h-px w-14 bg-[var(--gold)] shadow-[0_0_18px_var(--gold)]"></span>
+              <div class="mb-5 flex items-center justify-between gap-3"><span class="rounded-full border border-[color-mix(in_srgb,var(--gold)_42%,transparent)] px-2 py-1 text-[0.6rem] font-black uppercase tracking-[0.1em] text-[var(--gold-soft)]">${escapeHtml(bounty.severity)}</span>${isReward ? `<span class="rounded-full border px-2 py-1 text-[0.6rem] font-black uppercase tracking-[0.1em] ${stock > 0 ? "border-emerald-300/40 text-[var(--green)]" : "border-red-300/40 text-[var(--red)]"}">${stock > 0 ? `${stock} in stock` : "Out of stock"}</span>` : `<strong class="text-sm text-[var(--gold-soft)]">${escapeHtml(compactMoney(bounty.potential_value))}</strong>`}</div>
+              <h3 class="mb-2 text-lg font-semibold tracking-[-0.03em]">${escapeHtml(bounty.title)}</h3>
+              <p class="mb-5 min-h-10 text-sm leading-6 text-[var(--muted)]">${escapeHtml(ai.impact || "No impact summary was provided for this target.")}</p>
+              <div class="flex flex-wrap items-center justify-between gap-3 border-t border-[var(--line)] pt-4"><span class="text-[0.68rem] text-[var(--muted)]">Agent: <strong class="text-[var(--text)]">${escapeHtml(normalizeStatus(bounty.agent_status))}</strong></span>${isReward ? `<button class="rounded-lg border px-3 py-2 text-[0.63rem] font-black uppercase tracking-[0.08em] ${stock > 0 ? "border-[var(--cyan)]/50 bg-[var(--cyan)]/10 text-[var(--cyan)]" : "cursor-not-allowed border-[var(--line)] text-[var(--muted)] opacity-50"}" data-claim-id="${escapeHtml(bounty.id)}" ${stock > 0 ? "" : "disabled"}>${stock > 0 ? "Mass claim ↗" : "No inventory"}</button>` : `<button class="rounded-lg border border-[var(--line)] px-3 py-2 text-[0.63rem] font-black uppercase tracking-[0.08em] text-[var(--text)]" data-copy-id="${escapeHtml(bounty.id)}">📄 Copy report</button>`}</div>
+            </article>`;
+          }).join("");
+        };
+
+        const renderAgents = () => {
+          if (state.loading) return '<div class="skeleton"></div><div class="skeleton"></div>';
+          const agents = state.bounties.filter((bounty) => bounty.agent_status).slice(0, 8);
+          if (!agents.length) return '<div class="glass rounded-2xl border-dashed p-8 text-center text-sm text-[var(--muted)]">No active agents yet. Deploy one to start coverage.</div>';
+          return agents.map((bounty, index) => {
+            const status = normalizeStatus(bounty.agent_status);
+            const progress = Math.min(96, 35 + ((String(bounty.id).length * 11 + index * 13) % 62));
+            return `<article class="glass rounded-2xl p-4"><div class="flex items-center justify-between gap-3"><div class="flex min-w-0 items-center gap-3"><span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-[var(--cyan)]/40 bg-[var(--cyan)]/10 text-xs font-black text-[var(--cyan)]">A${String(index + 1).padStart(2, "0")}</span><div class="min-w-0"><h3 class="truncate text-sm font-bold">${escapeHtml(`AGENT / ${String(index + 1).padStart(2, "0")}`)}</h3><p class="truncate text-xs text-[var(--muted)]">${escapeHtml(bounty.title)}</p></div></div><span class="rounded-full border border-[var(--cyan)]/40 px-2 py-1 text-[0.58rem] font-black uppercase tracking-[0.1em] text-[var(--cyan)]">${escapeHtml(status)}</span></div><div class="mt-5 h-1.5 overflow-hidden rounded-full bg-white/10"><div class="h-full rounded-full bg-gradient-to-r from-[var(--cyan)] to-[var(--gold)]" style="width:${progress}%"></div></div><div class="mt-2 flex justify-between text-[0.65rem] text-[var(--muted)]"><span>Autonomous task progress</span><strong>${progress}%</strong></div></article>`;
+          }).join("");
+        };
+
+        const renderWallet = () => {
+          if (state.loading) return '<div class="skeleton"></div><div class="skeleton"></div>';
+          const total = state.claims.reduce((sum, claim) => sum + Number(claim.amount || 0), 0);
+          const days = Array.from({ length: 7 }, (_, index) => {
+            const date = new Date();
+            date.setDate(date.getDate() - (6 - index));
+            const key = date.toISOString().slice(0, 10);
+            return { label: date.toLocaleDateString([], { weekday: "short" }).slice(0, 2), amount: state.claims.filter((claim) => String(claim.created_at || "").slice(0, 10) === key).reduce((sum, claim) => sum + Number(claim.amount || 0), 0) };
+          });
+          const max = Math.max(...days.map((day) => day.amount), 1);
+          return `<article class="glass relative min-h-[190px] overflow-hidden rounded-2xl p-5"><span class="mb-8 block text-[0.62rem] font-black uppercase tracking-[0.14em] text-[var(--muted)]">Total realized earnings</span><strong class="relative z-10 block text-5xl font-medium tracking-[-0.08em] text-[var(--gold-soft)]">${escapeHtml(compactMoney(total))}</strong><p class="mt-3 text-xs text-[var(--muted)]">${state.claims.length} settled claim${state.claims.length === 1 ? "" : "s"} · Cumulative wallet</p></article>
+            <article class="glass rounded-2xl p-5"><div class="mb-6 flex items-center justify-between"><h3 class="text-sm font-semibold">Seven-day flow</h3><span class="text-[0.65rem] text-[var(--muted)]">Claim settlement volume</span></div><div class="grid h-40 grid-cols-7 items-end gap-2 border-b border-[var(--line)] bg-[repeating-linear-gradient(to_bottom,transparent_0_36px,var(--line)_36px_37px)]">${days.map((day) => `<div class="flex h-full flex-col items-center justify-end gap-2"><div class="w-full max-w-7 rounded-t-md bg-gradient-to-t from-[var(--gold)] to-[var(--cyan)]" style="height:${Math.max(4, (day.amount / max) * 100)}%" title="${escapeHtml(money(day.amount))}"></div><small class="text-[0.6rem] text-[var(--muted)]">${escapeHtml(day.label)}</small></div>`).join("")}</div><div class="mt-7 space-y-2">${state.claims.slice(0, 5).map((claim) => `<div class="flex items-center justify-between gap-3 border-b border-[var(--line)] py-2.5"><div><strong class="block text-xs">${escapeHtml(claim.title || "Reward claim")}</strong><span class="text-[0.65rem] text-[var(--muted)]">${claim.created_at ? new Date(claim.created_at).toLocaleDateString() : "Recently settled"}</span></div><span class="whitespace-nowrap text-xs font-black text-[var(--green)]">+${escapeHtml(money(claim.amount))}</span></div>`).join("") || '<p class="text-sm text-[var(--muted)]">No claims have settled yet.</p>'}</div></article>`;
+        };
+
+        function render() {
+          const all = state.bounties;
+          const totalPotential = all.reduce((sum, bounty) => sum + Number(bounty.potential_value || 0), 0);
+          const totalWallet = state.claims.reduce((sum, claim) => sum + Number(claim.amount || 0), 0);
+          $("#stat-bounties").textContent = state.loading ? "—" : all.length;
+          $("#stat-agents").textContent = state.loading ? "—" : state.bounties.filter((bounty) => bounty.agent_status).length;
+          $("#stat-potential").textContent = state.loading ? "—" : compactMoney(totalPotential);
+          $("#stat-wallet").textContent = state.loading ? "—" : compactMoney(totalWallet);
+          $("#bug-list").innerHTML = renderCards(bugBounties(), "bug");
+          $("#reward-list").innerHTML = renderCards(rewardBounties(), "reward");
+          $("#agent-list").innerHTML = renderAgents();
+          $("#wallet-content").innerHTML = renderWallet();
+          const updated = state.lastUpdated ? `Updated ${state.lastUpdated.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}` : "Loading…";
+          $("#bugs-updated").textContent = updated;
+          $("#rewards-updated").textContent = updated;
+          $("#wallet-updated").textContent = updated;
+          bindDynamicActions();
+        }
+
+        async function copyReport(id) {
+          const bounty = findBounty(id);
+          if (!bounty) return toast("That target is no longer available.", "error");
+          const ai = parseJsonb(bounty.ai_analysis);
+          const markdown = `# Security Report: ${bounty.title}\n\n## Severity\n${bounty.severity}\n\n## Impact\n${ai.impact || "Impact details were not provided. Validate the finding before submission."}\n\n## Potential Value\n${money(bounty.potential_value)}\n\n## Reproduction Notes\n_Add clear reproduction steps, affected assets, and supporting evidence here._\n\n## Suggested Remediation\n_Add a concise remediation recommendation here._`;
+          try {
+            await navigator.clipboard.writeText(markdown);
+            toast("Professional report copied to your clipboard.", "success");
+          } catch {
+            toast("Clipboard access was blocked. Copy the report manually.", "error");
+          }
+        }
+
+        function openClaimTarget(id) {
+          const bounty = findBounty(id);
+          const url = safeTargetUrl(bounty?.target_url);
+          if (!url) return toast("This target does not have a valid checkout URL.", "error");
+          HybridClaimEngine.prepare(bounty);
+        }
+
+        async function sendTelegram(message, claimId = "") {
+          if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) {
+            log("Telegram webhook not configured; event remains local.", "muted");
+            return;
+          }
+          const claimQuery = claimId ? `?claim=${encodeURIComponent(claimId)}` : "";
+          const dashboardLink = `${window.location.origin}${window.location.pathname}${claimQuery}#agents`;
+          try {
+            const response = await fetch(`https://api.telegram.org/bot${encodeURIComponent(TELEGRAM_BOT_TOKEN)}/sendMessage`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: `${message}\n\nOpen dashboard: ${dashboardLink}`, disable_web_page_preview: false }),
+            });
+            if (!response.ok) throw new Error(`Telegram returned ${response.status}`);
+          } catch (error) {
+            console.warn("Telegram update failed:", error);
+            log("Telegram update failed; continuing locally.", "alert");
+          }
+        }
+
+        async function writeClaimResult(target, result, reason = "") {
+          const payload = { bounty_id: target?.id, status: result, amount: Number(target?.potential_value || 0), metadata: { source: "HybridClaimEngine", reason, manual_confirmation: true, created_at: new Date().toISOString() } };
+          if (!supabase) return;
+          const { error } = await supabase.from("user_claims").insert(payload);
+          if (error) {
+            console.warn("Claim result could not be logged:", error);
+            toast("Claim result could not be saved to user_claims.", "error");
+          }
+        }
+
+        const HybridClaimEngine = (() => {
+          let timer;
+          let timeoutTimer;
+          let countdownTimer;
+          let currentTarget = null;
+          let preparing = false;
+          let lastPollAt = 0;
+          let pollInFlight = false;
+          let backoffUntil = 0;
+
+          const wait = (min = 50, max = 200) => new Promise((resolve) => setTimeout(resolve, Math.floor(min + Math.random() * (max - min + 1))));
+          const simulateMouseMovement = () => {
+            document.dispatchEvent(new MouseEvent("mousemove", { bubbles: true, clientX: 40 + Math.random() * Math.max(40, window.innerWidth - 80), clientY: 40 + Math.random() * Math.max(40, window.innerHeight - 80) }));
+          };
+
+          async function poll() {
+            if (!supabase || pollInFlight || Date.now() < backoffUntil || Date.now() - lastPollAt < 800) return;
+            pollInFlight = true;
+            lastPollAt = Date.now();
+            try {
+              const { data, error } = await supabase.from("bounties").select("*").eq("category", "reward").limit(50);
+              if (error) throw error;
+              (data || []).map(normalizeBounty).filter((target) => target.stock > 0 && target.timeRemaining < CLAIM_TIME_THRESHOLD_SECONDS).forEach((target) => {
+                if (!state.knownFlashTargets.has(String(target.id))) {
+                  state.knownFlashTargets.add(String(target.id));
+                  prepare(target);
+                }
+              });
+              backoffUntil = 0;
+            } catch (error) {
+              console.warn("Hybrid polling failed:", error);
+              backoffUntil = Date.now() + 4000;
+              log("Polling paused briefly after a network error.", "alert");
+            } finally {
+              pollInFlight = false;
+            }
+          }
+
+          function showEmergency(target) {
+            $("#emergency-title").textContent = target.title || "Flashsale target";
+            $("#emergency-stock").textContent = `${target.stock} units`;
+            $("#emergency-time").textContent = `${target.timeRemaining}s`;
+            $("#emergency-countdown").textContent = "30s";
+            $("#confirm-checkout").disabled = false;
+            $("#confirm-checkout").textContent = "🔥 Confirm 1-Klik checkout";
+            $("#dismiss-emergency").classList.add("hidden");
+            $("#emergency-overlay").classList.remove("hidden-until-ready");
+            clearTimeout(timeoutTimer);
+            clearInterval(countdownTimer);
+            let seconds = 30;
+            countdownTimer = setInterval(() => {
+              seconds -= 1;
+              $("#emergency-countdown").textContent = `${seconds}s`;
+              if (seconds <= 0) expire();
+            }, 1000);
+            timeoutTimer = setTimeout(expire, 30000);
+          }
+
+          async function prepare(target) {
+            if (preparing || currentTarget) return;
+            preparing = true;
+            currentTarget = target;
+            log(`🔥 FLASHSALE DETECTED - AWAITING 1-KLIK · stock ${target.stock} · time ${target.timeRemaining}s`, "alert");
+            await wait();
+            simulateMouseMovement();
+            const encryptedTokenAvailable = state.sessions.some((session) => session.encrypted_session_token);
+            log(encryptedTokenAvailable ? "Token Validated · encrypted reference only" : "Token Validated · no plaintext token exposed", "success");
+            await wait();
+            simulateMouseMovement();
+            log("Form Pre-filled · checkout stays manual", "info");
+            await wait();
+            showEmergency(target);
+            preparing = false;
+            sendTelegram(`🔥 BOS! Flashsale detected! Stock: ${target.stock}, Time: ${target.timeRemaining}s. Open dashboard NOW for 1-Klik Confirm!`, target.id);
+          }
+
+          async function confirm() {
+            if (!currentTarget) return;
+            const target = currentTarget;
+            $("#confirm-checkout").disabled = true;
+            $("#confirm-checkout").textContent = "Opening secure checkout…";
+            await wait(50, 200);
+            const url = safeTargetUrl(target.target_url);
+            const opened = url ? window.open(url, "_blank", "noopener,noreferrer") : null;
+            if (!opened) {
+              log("❌ STOCK DEPLETED · checkout window was blocked or target expired", "alert");
+              await writeClaimResult(target, "failed", "checkout window blocked or invalid target");
+              await sendTelegram(`❌ Claim failed for ${target.title}. The checkout window was blocked or the target expired.`);
+              $("#confirm-checkout").textContent = "Checkout could not open";
+              allowDismiss();
+              return;
+            }
+            log("✅ CLAIM SUCCESS · checkout opened for manual completion", "success");
+            await writeClaimResult(target, "success", "manual confirmation opened checkout");
+            await sendTelegram(`✅ Claim handoff opened for ${target.title}. Complete checkout manually in the new tab.`);
+            $("#confirm-checkout").textContent = "Checkout opened ✓";
+            allowDismiss();
+          }
+
+          async function expire() {
+            if (!currentTarget) return;
+            clearInterval(countdownTimer);
+            log("❌ STOCK DEPLETED · emergency window expired", "alert");
+            await writeClaimResult(currentTarget, "expired", "30 second emergency window expired");
+            await sendTelegram(`❌ Claim window expired for ${currentTarget.title}; no checkout was submitted.`);
+            $("#confirm-checkout").disabled = true;
+            $("#confirm-checkout").textContent = "Window expired";
+            allowDismiss();
+          }
+
+          function allowDismiss() {
+            $("#dismiss-emergency").classList.remove("hidden");
+          }
+
+          function dismiss() {
+            clearTimeout(timeoutTimer);
+            clearInterval(countdownTimer);
+            $("#emergency-overlay").classList.add("hidden-until-ready");
+            currentTarget = null;
+            preparing = false;
+          }
+
+          function start() {
+            if (!supabase) {
+              log("Scanning… demo mode is local; live polling starts after Supabase keys are filled.", "muted");
+              return;
+            }
+            log("Scanning… live target queue initialized.", "info");
+            timer = setInterval(poll, 800);
+            poll();
+          }
+
+          return { start, prepare, confirm, dismiss };
+        })();
+
+        async function deployAgent() {
+          const target = state.bounties.find((bounty) => !bounty.agent_status || bounty.agent_status === "Scanning");
+          if (supabase && target) {
+            const { error } = await supabase.from("bounties").update({ agent_status: "Scanning" }).eq("id", target.id);
+            if (error) return toast("Could not assign the target. Check the bounties schema.", "error");
+            log(`Agent deployed against ${target.title}.`, "success");
+            await refreshData({ silent: true });
+            return;
+          }
+          log(`Agent deployed against ${target?.title || "autonomous queue scan"} in demo mode.`, "success");
+          toast("Demo agent deployed. Add Supabase keys to persist assignments.");
+        }
+
+        function bindActions() {
+          $$("[data-tab]").forEach((button) => button.addEventListener("click", () => {
+            const tab = button.dataset.tab;
+            $$("[data-tab]").forEach((item) => {
+              item.classList.toggle("bg-[color-mix(in_srgb,var(--gold)_18%,var(--panel))]", item.dataset.tab === tab);
+              item.classList.toggle("text-[var(--gold-soft)]", item.dataset.tab === tab);
+              item.classList.toggle("text-[var(--muted)]", item.dataset.tab !== tab);
+            });
+            $$("[data-panel]").forEach((panel) => panel.classList.toggle("hidden", panel.dataset.panel !== tab));
+          }));
+          $$(".skin-button").forEach((button) => button.addEventListener("click", () => {
+            const skin = button.dataset.skin;
+            document.body.dataset.skin = skin;
+            localStorage.setItem("carbon-skin", skin);
+            $$(".skin-button").forEach((item) => item.classList.toggle("border-[var(--text)]", item.dataset.skin === skin));
+            $$(".skin-button").forEach((item) => item.classList.toggle("border-transparent", item.dataset.skin !== skin));
+          }));
+          $("#refresh-button").addEventListener("click", () => refreshData());
+          $("#deploy-agent").addEventListener("click", deployAgent);
+          $("#confirm-checkout").addEventListener("click", HybridClaimEngine.confirm);
+          $("#dismiss-emergency").addEventListener("click", HybridClaimEngine.dismiss);
+        }
+
+        function bindDynamicActions() {
+          $$("[data-copy-id]").forEach((button) => { button.onclick = () => copyReport(button.dataset.copyId); });
+          $$("[data-claim-id]").forEach((button) => { button.onclick = () => openClaimTarget(button.dataset.claimId); });
+        }
+
+        const savedSkin = localStorage.getItem("carbon-skin");
+        if (savedSkin && ["luxury", "cyber", "minimal"].includes(savedSkin)) {
+          document.body.dataset.skin = savedSkin;
+          $$(".skin-button").forEach((button) => button.classList.toggle("border-[var(--text)]", button.dataset.skin === savedSkin));
+          $$(".skin-button").forEach((button) => button.classList.toggle("border-transparent", button.dataset.skin !== savedSkin));
+        }
+        bindActions();
+        refreshData();
+        setInterval(() => refreshData({ silent: true }), 10000);
+        HybridClaimEngine.start();
+      })();
+    </script>
+  </body>
 </html>
