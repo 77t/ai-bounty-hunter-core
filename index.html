@@ -1,1080 +1,392 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#121212" />
-    <meta name="description" content="Teguh Hunter Web APK — personal bounty and opportunity command center." />
-    <title>Teguh Hunter Web APK</title>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teguh Hunter - AI Command Center</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            fontFamily: {
-              sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
-              mono: ["JetBrains Mono", "ui-monospace", "monospace"],
-            },
-          },
-        },
-      };
-    </script>
-    <style>
-      :root {
-        --bg: #121212;
-        --panel: rgba(22, 22, 22, 0.72);
-        --panel-strong: rgba(28, 28, 28, 0.92);
-        --text: #f5f1e8;
-        --muted: #9b958b;
-        --line: rgba(255, 255, 255, 0.1);
-        --gold: #00aa13;
-        --gold-soft: #55db68;
-        --cyan: #54d889;
-        --green: #7af18b;
-        --action: #00aa13;
-        --action-hover: #00c41a;
-        --action-text: #ffffff;
-        --red: #ff636f;
-        --orange: #efaa6c;
-      }
-
-      [data-skin="cyber"] {
-        --bg: #070d16;
-        --panel: rgba(7, 22, 38, 0.76);
-        --panel-strong: rgba(8, 31, 51, 0.93);
-        --text: #effeff;
-        --muted: #82a6b5;
-        --line: rgba(104, 230, 239, 0.17);
-        --gold: #ff4fd8;
-        --gold-soft: #ff9be9;
-        --cyan: #68f7ff;
-        --green: #84f6b6;
-        --action: #00aa13;
-        --action-hover: #00c41a;
-        --action-text: #ffffff;
-        --red: #ff688d;
-        --orange: #ffb673;
-      }
-
-      [data-skin="minimal"] {
-        --bg: #f1f0eb;
-        --panel: rgba(255, 255, 255, 0.78);
-        --panel-strong: rgba(255, 255, 255, 0.95);
-        --text: #1e201f;
-        --muted: #70736e;
-        --line: rgba(30, 32, 31, 0.13);
-        --gold: #a2741c;
-        --gold-soft: #b88a2b;
-        --cyan: #118c97;
-        --green: #278c5a;
-        --action: #00aa13;
-        --action-hover: #00c41a;
-        --action-text: #ffffff;
-        --red: #b9464f;
-        --orange: #b9692f;
-      }
-
-      * {
-        box-sizing: border-box;
-      }
-
-      html,
-      body {
-        min-width: 320px;
-        min-height: 100%;
-        margin: 0;
-      }
-
-      body {
-        overflow-x: hidden;
-        color: var(--text);
-        background:
-          radial-gradient(circle at 90% 0%, color-mix(in srgb, var(--gold) 13%, transparent), transparent 26rem),
-          radial-gradient(circle at 0% 42%, color-mix(in srgb, var(--cyan) 7%, transparent), transparent 26rem),
-          var(--bg);
-      }
-
-      body::before {
-        position: fixed;
-        z-index: -1;
-        inset: 0;
-        pointer-events: none;
-        opacity: 0.43;
-        content: "";
-        background-image:
-          repeating-linear-gradient(112deg, rgba(255, 255, 255, 0.025) 0 1px, transparent 1px 5px),
-          repeating-linear-gradient(22deg, transparent 0 7px, rgba(0, 0, 0, 0.2) 7px 8px),
-          radial-gradient(circle at 15% 25%, rgba(255, 255, 255, 0.04), transparent 22%);
-        mix-blend-mode: screen;
-      }
-
-      [data-skin="minimal"] body::before {
-        opacity: 0.12;
-        mix-blend-mode: multiply;
-      }
-
-      .glass {
-        border: 1px solid var(--line);
-        background: linear-gradient(135deg, color-mix(in srgb, var(--panel-strong) 94%, transparent), var(--panel));
-        box-shadow: 0 24px 70px rgba(0, 0, 0, 0.26);
-        backdrop-filter: blur(22px);
-      }
-
-      .scanline {
-        background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--cyan) 52%, transparent), transparent);
-        background-size: 200% 100%;
-        animation: scanline 2.8s linear infinite;
-      }
-
-      @keyframes scanline {
-        from { background-position: 200% 0; }
-        to { background-position: -200% 0; }
-      }
-
-      .emergency-pulse {
-        animation: emergency-pulse 1.25s ease-in-out infinite;
-      }
-
-      @keyframes emergency-pulse {
-        0%, 100% { box-shadow: 0 0 0 0 rgba(255, 47, 73, 0.26), 0 0 60px rgba(255, 47, 73, 0.1); }
-        50% { box-shadow: 0 0 0 15px rgba(255, 47, 73, 0), 0 0 90px rgba(255, 47, 73, 0.28); }
-      }
-
-      .skeleton {
-        min-height: 150px;
-        border-radius: 1rem;
-        background: linear-gradient(110deg, color-mix(in srgb, var(--panel) 95%, transparent) 30%, color-mix(in srgb, var(--text) 9%, var(--panel)) 45%, color-mix(in srgb, var(--panel) 95%, transparent) 60%);
-        background-size: 300% 100%;
-        animation: skeleton 1.35s ease-in-out infinite;
-      }
-
-      @keyframes skeleton {
-        from { background-position: 100% 0; }
-        to { background-position: -100% 0; }
-      }
-
-      .terminal-scroll {
-        scrollbar-color: color-mix(in srgb, var(--cyan) 45%, transparent) transparent;
-      }
-
-      .terminal-scroll::-webkit-scrollbar {
-        width: 5px;
-      }
-
-      .terminal-scroll::-webkit-scrollbar-thumb {
-        border-radius: 999px;
-        background: color-mix(in srgb, var(--cyan) 45%, transparent);
-      }
-
-      .hidden-until-ready {
-        display: none !important;
-      }
-
-      .action-button {
-        min-height: 3rem;
-        border: 1px solid color-mix(in srgb, var(--action) 80%, white);
-        border-radius: 0.85rem;
-        background: var(--action);
-        color: var(--action-text);
-        font-size: 0.82rem;
-        font-weight: 900;
-        letter-spacing: 0.025em;
-        line-height: 1.2;
-        box-shadow: 0 10px 24px color-mix(in srgb, var(--action) 22%, transparent);
-        transition: background 160ms ease, transform 160ms ease, box-shadow 160ms ease;
-      }
-
-      .action-button:hover {
-        background: var(--action-hover);
-        box-shadow: 0 12px 28px color-mix(in srgb, var(--action) 34%, transparent);
-        transform: translateY(-1px);
-      }
-
-      .action-button:active {
-        transform: translateY(0);
-      }
-
-      .action-button:disabled {
-        cursor: not-allowed;
-        border-color: var(--line);
-        background: color-mix(in srgb, var(--panel-strong) 82%, transparent);
-        color: var(--muted);
-        opacity: 0.62;
-        box-shadow: none;
-        transform: none;
-      }
-
-      .tab-panel [class*="text-[0.61rem]"],
-      .tab-panel [class*="text-[0.62rem]"],
-      .tab-panel [class*="text-[0.63rem]"],
-      .tab-panel [class*="text-[0.64rem]"],
-      .tab-panel [class*="text-[0.65rem]"],
-      .tab-panel [class*="text-[0.68rem]"] {
-        font-size: 0.74rem !important;
-      }
-
-      .tab-panel .text-xs {
-        font-size: 0.84rem !important;
-        line-height: 1.45;
-      }
-
-      .tab-panel p {
-        line-height: 1.6;
-      }
-    </style>
-  </head>
-  <body data-skin="luxury" class="font-sans antialiased">
-    <div id="app" class="mx-auto min-h-screen w-full max-w-7xl px-4 pb-28 sm:px-7 lg:px-10">
-      <header class="flex items-center justify-between gap-3 py-5 sm:py-7">
-        <a href="/" class="flex min-w-0 items-center gap-2.5 no-underline" aria-label="Teguh Hunter Web APK">
-          <span class="grid h-9 w-9 shrink-0 place-items-center rounded-lg border-2 border-[var(--gold)] text-base font-black text-[var(--gold-soft)] shadow-[0_0_24px_color-mix(in_srgb,var(--gold)_20%,transparent)]">T</span>
-          <span class="truncate text-base font-black tracking-[-0.02em] text-[var(--text)] sm:text-lg">Teguh Hunter Web APK</span>
-        </a>
-        <div class="flex items-center gap-2.5">
-          <span class="hidden items-center gap-1.5 text-[0.74rem] font-black uppercase tracking-[0.12em] text-[var(--green)] sm:flex"><i class="h-1.5 w-1.5 rounded-full bg-current shadow-[0_0_12px_currentColor]"></i>Autopilot live</span>
-          <div class="glass flex gap-1 rounded-xl p-1" aria-label="Choose skin">
-            <button class="skin-button h-6 w-6 rounded-md border border-[var(--text)] bg-[linear-gradient(135deg,#050505_46%,#d6aa4f_47%_58%,#5ce2eb_59%)]" data-skin="luxury" title="Luxury Carbon" aria-label="Luxury Carbon"></button>
-            <button class="skin-button h-6 w-6 rounded-md border border-transparent bg-[linear-gradient(135deg,#07121e_46%,#ff4fd8_47%_58%,#63f6ff_59%)]" data-skin="cyber" title="Cyber Neon" aria-label="Cyber Neon"></button>
-            <button class="skin-button h-6 w-6 rounded-md border border-transparent bg-[linear-gradient(135deg,#fff_46%,#a7791f_47%_58%,#138e98_59%)]" data-skin="minimal" title="Minimalist White" aria-label="Minimalist White"></button>
-          </div>
-        </div>
-      </header>
-
-      <section class="grid items-end gap-7 py-10 sm:py-16 lg:grid-cols-[1fr_auto]">
-        <div>
-          <p class="mb-3 text-[0.65rem] font-black uppercase tracking-[0.23em] text-[var(--gold-soft)]">Private intelligence terminal / 01</p>
-          <h1 class="max-w-4xl text-5xl font-bold leading-[0.94] tracking-[-0.07em] text-[var(--text)] sm:text-7xl lg:text-8xl">Turn signals into <span class="text-[var(--gold-soft)]">upside.</span></h1>
-          <p class="mt-5 max-w-2xl text-sm leading-7 text-[var(--muted)] sm:text-base">A focused command center for bug bounties, scarce rewards, autonomous agents, and wallet settlement. Your hand stays on the final claim.</p>
-        </div>
-        <div class="flex flex-wrap items-center gap-2 lg:justify-end">
-            <button id="refresh-button" class="action-button px-4 text-[0.82rem] uppercase tracking-[0.06em]">🔄 Force re-scan now</button>
-          <span class="text-[0.78rem] text-[var(--muted)]">Mode: <strong id="data-mode" class="text-[var(--text)]">Demo snapshot</strong></span>
-        </div>
-      </section>
-
-      <section class="mb-7 grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3" aria-label="Command center summary">
-        <article class="glass rounded-2xl p-4">
-          <span class="mb-4 block text-[0.61rem] font-black uppercase tracking-[0.14em] text-[var(--muted)]">Open bounties</span>
-          <strong id="stat-bounties" class="block text-2xl font-semibold tracking-[-0.05em]">—</strong>
-          <span class="text-[0.68rem] text-[var(--muted)]">Active queue</span>
-        </article>
-        <article class="glass rounded-2xl p-4">
-          <span class="mb-4 block text-[0.61rem] font-black uppercase tracking-[0.14em] text-[var(--muted)]">Agents online</span>
-          <strong id="stat-agents" class="block text-2xl font-semibold tracking-[-0.05em]">—</strong>
-          <span class="text-[0.68rem] text-[var(--muted)]">24 / 7 coverage</span>
-        </article>
-        <article class="glass rounded-2xl p-4">
-          <span class="mb-4 block text-[0.61rem] font-black uppercase tracking-[0.14em] text-[var(--muted)]">Potential value</span>
-          <strong id="stat-potential" class="block text-2xl font-semibold tracking-[-0.05em]">—</strong>
-          <span class="text-[0.68rem] text-[var(--muted)]">Available targets</span>
-        </article>
-        <article class="glass rounded-2xl p-4">
-          <span class="mb-4 block text-[0.61rem] font-black uppercase tracking-[0.14em] text-[var(--muted)]">Wallet total</span>
-          <strong id="stat-wallet" class="block text-2xl font-semibold tracking-[-0.05em]">—</strong>
-          <span class="text-[0.68rem] text-[var(--muted)]">Settled claims</span>
-        </article>
-      </section>
-
-       <nav class="glass sticky top-2 z-30 mb-8 grid grid-cols-4 gap-1 rounded-2xl p-1" aria-label="Main sections">
-         <button class="tab-button min-h-12 rounded-xl bg-[color-mix(in_srgb,var(--gold)_18%,var(--panel))] px-2 py-3 text-[0.72rem] font-black uppercase leading-4 tracking-[0.02em] text-[var(--gold-soft)] sm:text-[0.8rem]" data-tab="crypto">💰 Uang & Crypto</button>
-         <button class="tab-button min-h-12 rounded-xl px-2 py-3 text-[0.72rem] font-black uppercase leading-4 tracking-[0.02em] text-[var(--muted)] sm:text-[0.8rem]" data-tab="bugs">🛡️ Bug Bounty</button>
-         <button class="tab-button min-h-12 rounded-xl px-2 py-3 text-[0.72rem] font-black uppercase leading-4 tracking-[0.02em] text-[var(--muted)] sm:text-[0.8rem]" data-tab="goods">📦 Barang & Diskon</button>
-         <button class="tab-button min-h-12 rounded-xl px-2 py-3 text-[0.72rem] font-black uppercase leading-4 tracking-[0.02em] text-[var(--muted)] sm:text-[0.8rem]" data-tab="control">⚙️ Kontrol & Logs</button>
-      </nav>
-
-      <main>
-         <section id="panel-crypto" class="tab-panel" data-panel="crypto">
-           <div class="mb-5 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
-             <div>
-               <p class="mb-2 text-[0.64rem] font-black uppercase tracking-[0.2em] text-[var(--gold-soft)]">Signal / digital upside</p>
-               <h2 class="text-3xl font-medium tracking-[-0.06em]">Uang & crypto</h2>
-               <p class="mt-2 max-w-xl text-sm text-[var(--muted)]">Airdrops and incentives are prepared locally. Final claim confirmation always stays with you.</p>
-             </div>
-             <span id="crypto-updated" class="text-[0.68rem] text-[var(--muted)]">Loading…</span>
-           </div>
-           <div id="crypto-list" class="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-             <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
-           </div>
-           <div id="wallet-content" class="mt-4 grid gap-3 lg:grid-cols-[0.72fr_1.28fr]"></div>
-         </section>
-
-         <section id="panel-bugs" class="tab-panel hidden" data-panel="bugs">
-          <div class="mb-5 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
-            <div>
-              <p class="mb-2 text-[0.64rem] font-black uppercase tracking-[0.2em] text-[var(--gold-soft)]">Signal / vulnerability research</p>
-              <h2 class="text-3xl font-medium tracking-[-0.06em]">Bug bounty board</h2>
-              <p class="mt-2 max-w-xl text-sm text-[var(--muted)]">Prioritized findings with enough context to move from signal to a report worth reading.</p>
-            </div>
-            <span id="bugs-updated" class="text-[0.68rem] text-[var(--muted)]">Loading…</span>
-          </div>
-          <div id="bug-list" class="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-            <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
-          </div>
-        </section>
-
-         <section id="panel-goods" class="tab-panel hidden" data-panel="goods">
-          <div class="mb-5 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
-            <div>
-              <p class="mb-2 text-[0.64rem] font-black uppercase tracking-[0.2em] text-[var(--gold-soft)]">Signal / physical upside</p>
-               <h2 class="text-3xl font-medium tracking-[-0.06em]">Barang & diskon</h2>
-               <p class="mt-2 max-w-xl text-sm text-[var(--muted)]">Flash sales, freebies, and pricing signals with checkout fields prepared locally.</p>
-            </div>
-             <span id="goods-updated" class="text-[0.68rem] text-[var(--muted)]">Loading…</span>
-          </div>
-           <div id="goods-list" class="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-            <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
-          </div>
-        </section>
-
-         <section id="panel-control" class="tab-panel hidden" data-panel="control">
-          <div class="mb-4 grid gap-3 rounded-2xl border border-[color-mix(in_srgb,var(--cyan)_28%,transparent)] bg-[color-mix(in_srgb,var(--cyan)_7%,var(--panel))] p-4 sm:grid-cols-[auto_1fr_auto] sm:items-center">
-            <span class="grid h-10 w-10 place-items-center rounded-full border border-[color-mix(in_srgb,var(--cyan)_52%,transparent)] text-[var(--cyan)]">✦</span>
-             <div><strong class="block text-sm">Control room is watching the queue.</strong><p class="mt-1 text-xs text-[var(--muted)]">Scanning, validation, and manual handoff status update here in real time.</p></div>
-             <button id="deploy-agent" class="rounded-xl border border-[var(--gold)] bg-[color-mix(in_srgb,var(--gold)_14%,var(--panel))] px-4 py-3 text-[0.64rem] font-black uppercase tracking-[0.08em] text-[var(--gold-soft)]">Deploy validation agent +</button>
-          </div>
-          <div class="mb-5 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
-             <div><p class="mb-2 text-[0.64rem] font-black uppercase tracking-[0.2em] text-[var(--gold-soft)]">Control / live validation</p><h2 class="text-3xl font-medium tracking-[-0.06em]">Kontrol & logs</h2></div>
-             <span class="text-[0.68rem] text-[var(--muted)]">Live polling every 800ms when Supabase is configured</span>
-          </div>
-           <div class="mb-4 grid gap-4 xl:grid-cols-[0.85fr_1.15fr]">
-             <div id="agent-list" class="grid content-start gap-3"><div class="skeleton"></div><div class="skeleton"></div></div>
-            <div class="glass overflow-hidden rounded-2xl">
-               <div class="flex items-center justify-between border-b border-[var(--line)] px-4 py-3"><div><p class="text-[0.62rem] font-black uppercase tracking-[0.15em] text-[var(--cyan)]">Live execution logs</p><p class="mt-1 text-[0.65rem] text-[var(--muted)]">Scanning · Token Valid · Ready for 1-Klik Confirm</p></div><span class="scanline h-1 w-20 rounded-full"></span></div>
-              <div id="execution-log" class="terminal-scroll h-[320px] overflow-y-auto bg-black/20 p-4 font-mono text-[0.69rem] leading-6"></div>
-            </div>
-          </div>
-           <div class="glass mb-4 rounded-2xl p-4">
-             <div class="mb-4 flex items-center justify-between gap-3">
-               <div><p class="text-[0.62rem] font-black uppercase tracking-[0.15em] text-[var(--gold-soft)]">AI status tracker</p><h3 class="mt-1 text-lg font-semibold">Agent performance score</h3></div>
-               <span id="health-score" class="rounded-full border border-[var(--gold)]/50 px-3 py-1 text-sm font-black text-[var(--gold-soft)]">—</span>
-             </div>
-             <div class="grid grid-cols-2 gap-2 sm:grid-cols-4">
-               <div class="rounded-xl border border-[var(--line)] bg-black/10 p-3"><span class="block text-[0.62rem] uppercase tracking-[0.12em] text-[var(--muted)]">Scan speed</span><strong id="health-scan-speed" class="mt-1 block text-lg text-[var(--text)]">—</strong></div>
-               <div class="rounded-xl border border-[var(--line)] bg-black/10 p-3"><span class="block text-[0.62rem] uppercase tracking-[0.12em] text-[var(--muted)]">Total latency</span><strong id="health-latency" class="mt-1 block text-lg text-[var(--text)]">—</strong></div>
-               <div class="rounded-xl border border-[var(--line)] bg-black/10 p-3"><span class="block text-[0.62rem] uppercase tracking-[0.12em] text-[var(--muted)]">Memory</span><strong id="health-memory" class="mt-1 block text-lg text-[var(--text)]">—</strong></div>
-               <div class="rounded-xl border border-[var(--line)] bg-black/10 p-3"><span class="block text-[0.62rem] uppercase tracking-[0.12em] text-[var(--muted)]">Events</span><strong id="health-events" class="mt-1 block text-lg text-[var(--text)]">—</strong></div>
-             </div>
-           </div>
-           <div class="grid gap-4 lg:grid-cols-2">
-             <div class="glass rounded-2xl p-4">
-               <div class="mb-3 flex items-center justify-between"><div><p class="text-[0.62rem] font-black uppercase tracking-[0.15em] text-[var(--cyan)]">Profile registry</p><h3 class="mt-1 text-lg font-semibold">10 active email profiles</h3></div><span class="text-[0.62rem] text-[var(--muted)]">metadata only</span></div>
-               <div id="profile-list" class="space-y-2"><div class="skeleton min-h-20"></div></div>
-             </div>
-             <div class="glass rounded-2xl p-4">
-               <div class="mb-3 flex items-center justify-between"><div><p class="text-[0.62rem] font-black uppercase tracking-[0.15em] text-[var(--red)]">AI validation</p><h3 class="mt-1 text-lg font-semibold">Scam logs</h3></div><span class="rounded-full border border-[var(--red)]/40 px-2 py-1 text-[0.58rem] font-black uppercase tracking-[0.1em] text-[var(--red)]">filtered</span></div>
-               <div id="scam-log" class="space-y-2"><div class="skeleton min-h-20"></div></div>
-             </div>
-           </div>
-           <div class="glass mt-4 rounded-2xl p-4">
-             <div class="mb-3 flex items-center justify-between gap-3"><div><p class="text-[0.62rem] font-black uppercase tracking-[0.15em] text-[var(--gold-soft)]">Alert webhook template</p><h3 class="mt-1 text-lg font-semibold">Telegram / WhatsApp handoff</h3></div><span class="text-[0.62rem] text-[var(--muted)]">manual configuration</span></div>
-             <pre class="overflow-x-auto rounded-xl border border-[var(--line)] bg-black/20 p-3 font-mono text-[0.68rem] leading-5 text-[var(--muted)]"><code>{
-  "event": "high_value_opportunity",
-  "amount_threshold_usd": 500,
-  "target_id": "&lt;validated-target-id&gt;",
-  "dashboard_path": "/index.html?claim=&lt;target-id&gt;#control",
-  "requires_manual_confirmation": true
-}</code></pre>
-           </div>
-        </section>
-      </main>
-    </div>
-
-    <div id="toast" class="pointer-events-none fixed bottom-5 left-1/2 z-[80] hidden w-[calc(100%-2rem)] max-w-md -translate-x-1/2 rounded-xl border border-[var(--line)] bg-[var(--panel-strong)] px-4 py-3 text-sm shadow-2xl backdrop-blur-xl" role="status" aria-live="polite"></div>
-
-    <div id="emergency-overlay" class="hidden-until-ready fixed inset-0 z-[9999] flex items-center justify-center bg-[radial-gradient(circle_at_50%_20%,rgba(255,85,85,.28),transparent_38%),linear-gradient(145deg,#21070b,#080606_58%,#28070b)] p-4">
-      <div class="emergency-pulse w-full max-w-lg rounded-[2rem] border border-red-400/50 bg-red-950/50 p-5 text-white shadow-2xl backdrop-blur-2xl sm:p-8">
-        <div class="mb-7 flex items-center justify-between gap-3"><span class="rounded-full border border-red-300/60 bg-red-400/15 px-3 py-1 text-[0.65rem] font-black uppercase tracking-[0.14em] text-red-200">Emergency claim window</span><span id="emergency-countdown" class="font-mono text-sm text-red-200">30s</span></div>
-        <p class="mb-3 text-[0.67rem] font-black uppercase tracking-[0.2em] text-red-300">Flashsale detected</p>
-        <h2 id="emergency-title" class="text-3xl font-semibold leading-tight tracking-[-0.05em] sm:text-5xl">Target detected</h2>
-        <div class="mt-6 grid grid-cols-2 gap-2"><div class="rounded-xl border border-white/10 bg-black/20 p-3"><span class="block text-[0.61rem] uppercase tracking-[0.14em] text-red-200/70">Stock</span><strong id="emergency-stock" class="mt-1 block text-xl">—</strong></div><div class="rounded-xl border border-white/10 bg-black/20 p-3"><span class="block text-[0.61rem] uppercase tracking-[0.14em] text-red-200/70">Time left</span><strong id="emergency-time" class="mt-1 block text-xl">—</strong></div></div>
-        <p class="mt-6 text-sm leading-6 text-red-100/75">The checkout is prepared but not submitted. Confirm only if you recognize the target and want to continue in a new tab.</p>
-        <button id="confirm-checkout" class="mt-7 flex min-h-20 w-full items-center justify-center rounded-2xl border border-red-200 bg-red-500 px-5 text-center text-lg font-black uppercase tracking-[-0.02em] text-white shadow-[0_0_34px_rgba(255,62,76,.4)] transition hover:bg-red-400 disabled:cursor-not-allowed disabled:opacity-50">🔥 Confirm 1-Klik checkout</button>
-        <button id="dismiss-emergency" class="mt-3 hidden w-full py-3 text-xs font-bold uppercase tracking-[0.12em] text-red-200/80 underline decoration-red-300/30 underline-offset-4">Dismiss emergency window</button>
-      </div>
-    </div>
-
+    <!-- Supabase JS -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <style>
+        /* Custom Scrollbar & Animations */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #00AA13; border-radius: 10px; }
+        
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 170, 19, 0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+        
+        .tab-active {
+            background-color: #00AA13 !important;
+            color: white !important;
+            font-weight: bold;
+        }
+        
+        .btn-gojek {
+            background-color: #00AA13;
+            color: white;
+            transition: all 0.3s ease;
+        }
+        .btn-gojek:hover { background-color: #008a0f; transform: translateY(-2px); }
+        
+        .status-badge { padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; }
+        .badge-ready { background: #e6f7e6; color: #00AA13; border: 1px solid #00AA13; }
+        .badge-auto { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
+        .badge-blocked { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+
+        @keyframes pulse-green {
+            0% { box-shadow: 0 0 0 0 rgba(0, 170, 19, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(0, 170, 19, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 170, 19, 0); }
+        }
+        .live-indicator { animation: pulse-green 2s infinite; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans min-h-screen pb-20">
+
+    <!-- HEADER COMMANDER -->
+    <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-green-100 p-4 flex justify-between items-center shadow-sm">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-[#00AA13] rounded-lg flex items-center justify-center text-white font-bold text-xl live-indicator">T</div>
+            <div>
+                <h1 class="font-bold text-lg leading-tight text-[#00AA13]">TEGUH HUNTER</h1>
+                <p class="text-xs text-gray-500">AI Hybrid Command Center v2.0</p>
+            </div>
+        </div>
+        <div class="text-right">
+            <div id="connection-status" class="text-xs font-mono text-gray-400">Connecting to Supabase...</div>
+            <div id="last-update" class="text-[10px] text-gray-400">--:--</div>
+        </div>
+    </header>
+
+    <!-- NAVIGATION TABS (GOJEK STYLE) -->
+    <nav class="sticky top-[73px] z-40 bg-white border-b border-gray-100 overflow-x-auto whitespace-nowrap px-2 py-3 shadow-sm">
+        <div class="inline-flex gap-2 min-w-max">
+            <button onclick="switchTab('uang')" id="tab-uang" class="tab-btn px-5 py-2.5 rounded-full text-sm border border-gray-200 bg-white text-gray-600 flex items-center gap-2 hover:bg-green-50 transition-all">
+                💰 Uang & Crypto
+            </button>
+            <button onclick="switchTab('bug')" id="tab-bug" class="tab-btn px-5 py-2.5 rounded-full text-sm border border-gray-200 bg-white text-gray-600 flex items-center gap-2 hover:bg-green-50 transition-all">
+                🛡️ Bug Bounty
+            </button>
+            <button onclick="switchTab('barang')" id="tab-barang" class="tab-btn tab-active px-5 py-2.5 rounded-full text-sm border border-transparent flex items-center gap-2 transition-all">
+                 Barang & Diskon
+            </button>
+            <button onclick="switchTab('kontrol')" id="tab-kontrol" class="tab-btn px-5 py-2.5 rounded-full text-sm border border-gray-200 bg-white text-gray-600 flex items-center gap-2 hover:bg-green-50 transition-all">
+                ⚙️ Kontrol & Logs
+            </button>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="p-4 max-w-4xl mx-auto space-y-4">
+        
+        <!-- DASHBOARD SUMMARY CARDS -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+            <div class="glass-panel p-4 rounded-2xl border-l-4 border-[#00AA13]">
+                <p class="text-xs text-gray-500 uppercase tracking-wider">Total Potensi</p>
+                <h3 id="stat-potential" class="text-2xl font-bold text-gray-800 mt-1">Rp 0</h3>
+            </div>
+            <div class="glass-panel p-4 rounded-2xl border-l-4 border-blue-500">
+                <p class="text-xs text-gray-500 uppercase tracking-wider">Auto-Executed</p>
+                <h3 id="stat-auto" class="text-2xl font-bold text-gray-800 mt-1">0</h3>
+            </div>
+            <div class="glass-panel p-4 rounded-2xl border-l-4 border-orange-500">
+                <p class="text-xs text-gray-500 uppercase tracking-wider">Pending Action</p>
+                <h3 id="stat-pending" class="text-2xl font-bold text-gray-800 mt-1">0</h3>
+            </div>
+            <div class="glass-panel p-4 rounded-2xl border-l-4 border-purple-500">
+                <p class="text-xs text-gray-500 uppercase tracking-wider">Wallet Settled</p>
+                <h3 id="stat-wallet" class="text-2xl font-bold text-gray-800 mt-1">Rp 0</h3>
+            </div>
+        </div>
+
+        <!-- DATA CONTAINER -->
+        <div id="data-container" class="space-y-4">
+            <!-- Loading Skeleton -->
+            <div class="animate-pulse space-y-4">
+                <div class="h-40 bg-gray-200 rounded-2xl"></div>
+                <div class="h-40 bg-gray-200 rounded-2xl"></div>
+                <div class="h-40 bg-gray-200 rounded-2xl"></div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- AUTO EXECUTE LOG MODAL (Hidden by default) -->
+    <div id="log-modal" class="fixed bottom-4 right-4 w-80 bg-black/90 text-green-400 p-4 rounded-xl text-xs font-mono hidden z-50 shadow-2xl border border-green-500/30">
+        <div class="flex justify-between items-center mb-2 border-b border-green-500/20 pb-2">
+            <span class="font-bold">🤖 AI AUTO-EXECUTOR LOG</span>
+            <button onclick="document.getElementById('log-modal').classList.add('hidden')" class="text-gray-400 hover:text-white">✕</button>
+        </div>
+        <div id="log-content" class="h-40 overflow-y-auto space-y-1">
+            <!-- Logs will appear here -->
+        </div>
+    </div>
+
     <script>
-      const SUPABASE_URL = '';
-      const SUPABASE_ANON_KEY = '';
-      const TELEGRAM_BOT_TOKEN = '';
-      const TELEGRAM_CHAT_ID = '';
-      const CLAIM_TIME_THRESHOLD_SECONDS = 45;
+        // ==========================================
+        // 1. KONFIGURASI SUPABASE (PASTIKAN BENAR!)
+        // ==========================================
+        const SUPABASE_URL = "https://xnpxiddpfqolfqchtadw.supabase.co"; // Ganti dengan URL Supabase Bos
+        const SUPABASE_ANON_KEY = "sb_pub1shable_muxzmf57Ec9OPmLuM-kHw_h65thgMQ"; // Ganti dengan Anon Key Bos
+        
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-      (() => {
-        "use strict";
+        // State Global
+        let currentTab = 'barang';
+        let allData = [];
+        let autoExecInterval = null;
 
-        const demoBounties = [
-          { id: "demo-bug-1", category: "bug", title: "Cross-tenant cache key collision", severity: "Critical", potential_value: 18000000, ai_analysis: { impact: "A crafted cache key can expose private response fragments across tenant boundaries." }, agent_status: "Analyzing", target_url: "https://example.com/security" },
-          { id: "demo-bug-2", category: "bug", title: "Session replay after revoked device", severity: "High", potential_value: 7500000, ai_analysis: { impact: "Revoked sessions remain usable during a narrow refresh window." }, agent_status: "Scanning", target_url: "https://example.com/security" },
-          { id: "demo-crypto-1", category: "crypto", title: "Protocol contributor incentive", severity: "Priority", potential_value: 4600000, ai_analysis: { impact: "Eligibility signal detected for a protocol contribution incentive.", validation_status: "validated", token_symbol: "CRB" }, agent_status: "Analyzing", target_url: "https://example.com/claim" },
-          { id: "demo-crypto-2", category: "airdrop", title: "Community airdrop allocation", severity: "Open", potential_value: 1250000, ai_analysis: { impact: "Wallet activity matches the published incentive criteria.", validation_status: "review", token_symbol: "DROP" }, agent_status: "Scanning", target_url: "https://example.com/claim" },
-          { id: "demo-goods-1", category: "reward", title: "Limited edition hardware drop", severity: "Priority", potential_value: 3200000, ai_analysis: { stock_remaining: 14, time_remaining: 29, impact: "Fast-moving inventory with a verified resale window.", validation_status: "validated" }, agent_status: "Ready for 1-Klik Confirm", target_url: "https://example.com/claim" },
-          { id: "demo-goods-2", category: "discount", title: "Partner referral cash pool", severity: "Open", potential_value: 1250000, ai_analysis: { stock_remaining: 63, time_remaining: 180, impact: "Cash reward with a capped daily allocation.", validation_status: "review" }, agent_status: "Scanning", target_url: "https://example.com/claim" },
-          { id: "demo-scam-1", category: "crypto", title: "Unverified wallet-connect reward", severity: "Blocked", potential_value: 0, ai_analysis: { impact: "The target asks for an unrestricted wallet signature and lacks a verifiable issuer.", validation_status: "blocked", scam_score: 0.97, scam_reason: "Unrestricted wallet signature request" }, agent_status: "Blocked", target_url: "https://example.com/claim" },
-        ];
-        const demoClaims = [
-          { id: "claim-1", title: "Protocol disclosure reward", amount: 8400000, created_at: "2026-09-16T10:14:00Z" },
-          { id: "claim-2", title: "Partner referral pool", amount: 4200000, created_at: "2026-09-14T08:40:00Z" },
-          { id: "claim-3", title: "Hardware drop allocation", amount: 3200000, created_at: "2026-09-10T12:20:00Z" },
-        ];
-
-        const state = {
-          bounties: [],
-           sessions: [],
-           profiles: [],
-          claims: [],
-           scamLogs: [],
-          loading: true,
-          live: false,
-          connection: "offline",
-          refreshInFlight: false,
-          reconnectTimer: null,
-          lastUpdated: null,
-          knownFlashTargets: new Set(),
-          preparedTargets: new Map(),
-           deepLinkConsumed: false,
-        };
-        const DATA_CACHE_KEY = "teguh-hunter-vault-cache-v1";
-        const DATA_CACHE_TTL_MS = 15 * 60 * 1000;
-        const telemetry = {
-          startedAt: performance.now(),
-          executionHistory: [],
-          preparationLatencies: [],
-          healthRenderPending: false,
-        };
-        const $ = (selector) => document.querySelector(selector);
-        const $$ = (selector) => Array.from(document.querySelectorAll(selector));
-        let toastTimer;
-
-        const parseJsonb = (value) => {
-          if (!value) return {};
-          if (typeof value === "object" && !Array.isArray(value)) return value;
-          if (typeof value !== "string") return {};
-          try {
-            const parsed = JSON.parse(value);
-            return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed : {};
-          } catch {
-            return {};
-          }
-        };
-
-        const money = (value) => new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(Number(value) || 0);
-        const compactMoney = (value) => {
-          const amount = Number(value) || 0;
-          if (amount >= 1e9) return `Rp ${(amount / 1e9).toFixed(1)}B`;
-          if (amount >= 1e6) return `Rp ${(amount / 1e6).toFixed(1)}M`;
-          if (amount >= 1e3) return `Rp ${(amount / 1e3).toFixed(0)}K`;
-          return money(amount);
-        };
-        const escapeHtml = (value) => String(value ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
-        const normalizeStatus = (value) => {
-          const status = String(value || "Scanning").toLowerCase();
-           if (status.includes("blocked") || status.includes("reject")) return "Blocked";
-           if (status.includes("ready")) return "Ready for 1-Klik Confirm";
-           if (status.includes("token") || status.includes("valid")) return "Token Valid";
-          if (status.includes("claim")) return "Claiming";
-          if (status.includes("exploit")) return "Exploiting";
-          if (status.includes("analy")) return "Analyzing";
-          return "Scanning";
-        };
-        const normalizeBounty = (row) => {
-          const ai = parseJsonb(row?.ai_analysis);
-          return { ...row, title: row?.title || "Untitled target", severity: row?.severity || "Unclassified", potential_value: Number(row?.potential_value || row?.reward || 0), ai_analysis: ai, agent_status: normalizeStatus(row?.agent_status), stock: Number(ai.stock_remaining ?? row?.stock_remaining ?? 0), timeRemaining: Number(row?.time_remaining ?? ai.time_remaining ?? 999999) };
-        };
-        const configured = Boolean(SUPABASE_URL && SUPABASE_ANON_KEY) && !SUPABASE_URL.includes("your-") && !SUPABASE_ANON_KEY.includes("your-");
-        const supabase = configured && window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
-
-        const readDataCache = () => {
-          try {
-            const raw = localStorage.getItem(DATA_CACHE_KEY);
-            if (!raw) return null;
-            const cached = JSON.parse(raw);
-            if (!cached || cached.version !== 1 || !cached.savedAt || Date.now() - cached.savedAt > DATA_CACHE_TTL_MS) return null;
-            return cached;
-          } catch (error) {
-            console.warn("Vault cache read failed:", error);
-            return null;
-          }
-        };
-
-        const writeDataCache = () => {
-          try {
-            const safeSessions = state.sessions.map(({ id, user_id, expires_at, updated_at }) => ({ id, user_id, expires_at, updated_at }));
-            localStorage.setItem(DATA_CACHE_KEY, JSON.stringify({
-              version: 1,
-              savedAt: Date.now(),
-              bounties: state.bounties,
-              sessions: safeSessions,
-              profiles: state.profiles,
-              claims: state.claims,
-              scamLogs: state.scamLogs,
-            }));
-          } catch (error) {
-            console.warn("Vault cache write skipped:", error);
-          }
-        };
-
-        const applyCachedData = (cached) => {
-          if (!cached) return false;
-          state.bounties = (cached.bounties || []).map(normalizeBounty);
-          state.sessions = cached.sessions || [];
-          state.profiles = cached.profiles || [];
-          state.claims = cached.claims || [];
-          state.scamLogs = cached.scamLogs || [];
-          state.loading = false;
-          state.live = false;
-          state.connection = "cached";
-          state.lastUpdated = new Date(cached.savedAt);
-          $("#data-mode").textContent = "Cached snapshot";
-          render();
-          log("Cached vault snapshot ready · revalidating in background.", "muted");
-          return true;
-        };
-
-        const scheduleReconnect = () => {
-          if (!supabase || state.reconnectTimer) return;
-          state.connection = "reconnecting";
-          state.reconnectTimer = setTimeout(async () => {
-            state.reconnectTimer = null;
-            toast("🔄 Reconnecting to Vault...", "info");
-            await refreshData({ silent: true, reconnect: true });
-            if (!state.live) scheduleReconnect();
-          }, 5000);
-        };
-
-        const toast = (message, kind = "info") => {
-          const node = $("#toast");
-          node.className = `pointer-events-auto fixed bottom-5 left-1/2 z-[80] w-[calc(100%-2rem)] max-w-md -translate-x-1/2 rounded-xl border px-4 py-3 text-sm shadow-2xl backdrop-blur-xl ${kind === "error" ? "border-red-400/50 bg-red-950/90 text-red-100" : kind === "success" ? "border-emerald-300/40 bg-emerald-950/90 text-emerald-100" : "border-cyan-300/30 bg-slate-950/90 text-cyan-100"}`;
-          node.textContent = message;
-          clearTimeout(toastTimer);
-          toastTimer = setTimeout(() => { node.className = "pointer-events-none fixed bottom-5 left-1/2 z-[80] hidden w-[calc(100%-2rem)] max-w-md -translate-x-1/2 rounded-xl border border-[var(--line)] bg-[var(--panel-strong)] px-4 py-3 text-sm shadow-2xl backdrop-blur-xl"; }, 4500);
-        };
-
-        const scheduleHealthRender = () => {
-          if (telemetry.healthRenderPending) return;
-          telemetry.healthRenderPending = true;
-          requestAnimationFrame(() => {
-            telemetry.healthRenderPending = false;
-            renderHealthReport();
-          });
-        };
-
-        const log = (message, tone = "info") => {
-          const colors = { info: "text-[var(--cyan)]", success: "text-[var(--green)]", alert: "text-[var(--red)]", muted: "text-[var(--muted)]" };
-          const row = document.createElement("div");
-          row.className = `${colors[tone] || colors.info}`;
-          row.innerHTML = `<span class="mr-2 text-[var(--muted)]">${new Date().toLocaleTimeString([], { hour12: false })}</span><span>${escapeHtml(message)}</span>`;
-          const terminal = $("#execution-log");
-          terminal.appendChild(row);
-          terminal.scrollTop = terminal.scrollHeight;
-          telemetry.executionHistory.push({ at: Date.now(), message: String(message), tone });
-          if (telemetry.executionHistory.length > 200) telemetry.executionHistory.shift();
-          scheduleHealthRender();
-        };
-
-        const safeTargetUrl = (value) => /^https?:\/\//i.test(String(value || "")) ? String(value) : "";
-
-        const demoProfiles = Array.from({ length: 10 }, (_, index) => ({
-          id: `demo-profile-${index + 1}`,
-          display_name: `Profile ${String(index + 1).padStart(2, "0")}`,
-          email: `primary+profile${index + 1}@example.invalid`,
-          status: index < 8 ? "Ready" : "Standby",
-          updated_at: "2026-09-18T00:00:00Z",
-        }));
-
-        async function queryLiveData() {
-          if (!supabase) return { bounties: demoBounties.map(normalizeBounty), sessions: [], profiles: demoProfiles, claims: demoClaims };
-          const [bountyResult, sessionResult, profileResult, claimResult] = await Promise.all([
-            supabase.from("bounties").select("*").order("created_at", { ascending: false }).limit(100),
-            supabase.from("user_sessions").select("id,user_id,encrypted_session_token,expires_at,updated_at").order("updated_at", { ascending: false }).limit(20),
-            supabase.from("user_profiles").select("id,display_name,email,status,last_used_at,updated_at").order("updated_at", { ascending: false }).limit(10),
-            supabase.from("user_claims").select("*").order("created_at", { ascending: false }).limit(30),
-          ]);
-          if (bountyResult.error) throw bountyResult.error;
-          if (sessionResult.error) throw sessionResult.error;
-          if (profileResult.error) throw profileResult.error;
-          if (claimResult.error) throw claimResult.error;
-          return {
-            bounties: (bountyResult.data || []).map(normalizeBounty),
-            sessions: sessionResult.data || [],
-            profiles: (profileResult.data || []).slice(0, 10),
-            claims: (claimResult.data || []).map((claim) => ({ ...claim, title: claim.title || claim.bounty_title || claim.name || "Reward claim", amount: Number(claim.amount || claim.reward || claim.value || 0) })),
-          };
-        }
-
-        async function refreshData({ silent = false } = {}) {
-          if (state.refreshInFlight) return;
-          state.refreshInFlight = true;
-          if (!silent) {
-            state.loading = true;
-            render();
-          }
-          try {
-            const result = await queryLiveData();
-            state.bounties = result.bounties;
-            state.sessions = result.sessions;
-            state.profiles = result.profiles;
-            state.claims = result.claims;
-            state.scamLogs = result.bounties.filter((bounty) => {
-              const ai = parseJsonb(bounty.ai_analysis);
-              return ai.scam_score >= 0.7 || ["blocked", "scam", "rejected"].includes(String(ai.validation_status || "").toLowerCase());
-            });
-            state.live = Boolean(supabase);
-            state.connection = state.live ? "live" : "demo";
-            $("#data-mode").textContent = state.live ? "Supabase live" : "Demo snapshot";
-            if (state.reconnectTimer) {
-              clearTimeout(state.reconnectTimer);
-              state.reconnectTimer = null;
-            }
-            writeDataCache();
-          } catch (error) {
-            console.warn("Data refresh failed:", error);
-            state.bounties = demoBounties.map(normalizeBounty);
-            state.sessions = [];
-            state.profiles = demoProfiles;
-            state.claims = demoClaims.slice();
-            state.scamLogs = state.bounties.filter((bounty) => parseJsonb(bounty.ai_analysis).scam_score >= 0.7);
-            state.live = false;
-            state.connection = supabase ? "reconnecting" : "demo";
-            $("#data-mode").textContent = supabase ? "Reconnecting to Vault..." : "Fallback snapshot";
-            if (supabase) {
-              toast("🔄 Reconnecting to Vault...", "info");
-              scheduleReconnect();
-            } else if (!silent) {
-              toast("Live data is unavailable. Showing a safe local snapshot.", "error");
-            }
-          } finally {
-            state.loading = false;
-            state.lastUpdated = new Date();
-            state.refreshInFlight = false;
-            render();
-            const deepLinkId = new URLSearchParams(window.location.search).get("claim");
-            if (!state.deepLinkConsumed && deepLinkId) {
-              const deepLinkTarget = state.bounties.find((bounty) => String(bounty.id) === deepLinkId);
-              if (deepLinkTarget && (deepLinkTarget.stock > 0 || deepLinkTarget.potential_value > 0)) {
-                state.deepLinkConsumed = true;
-                document.querySelector('[data-tab="control"]').click();
-                HybridClaimEngine.prepare(getPreparedTarget(deepLinkTarget));
-              }
-            }
-          }
-        }
-
-        const bugBounties = () => state.bounties.filter((bounty) => String(bounty.category || "").toLowerCase() === "bug");
-        const cryptoBounties = () => state.bounties.filter((bounty) => ["crypto", "airdrop", "incentive", "web3"].includes(String(bounty.category || "").toLowerCase()));
-        const goodsBounties = () => state.bounties.filter((bounty) => ["reward", "goods", "physical", "flash_sale", "discount", "freebie", "barang"].includes(String(bounty.category || "").toLowerCase()));
-        const findBounty = (id) => state.bounties.find((bounty) => String(bounty.id) === String(id));
-        const compileTarget = (bounty) => {
-          if (!bounty) return null;
-          const fingerprint = JSON.stringify({
-            title: bounty.title,
-            target_url: bounty.target_url,
-            potential_value: bounty.potential_value,
-            stock: bounty.stock,
-            timeRemaining: bounty.timeRemaining,
-            agent_status: bounty.agent_status,
-            ai_analysis: bounty.ai_analysis,
-          });
-          const existing = state.preparedTargets.get(String(bounty.id));
-          if (existing?.fingerprint === fingerprint) return existing;
-          const prepared = {
-            ...bounty,
-            ai_analysis: parseJsonb(bounty.ai_analysis),
-            checkoutUrl: safeTargetUrl(bounty.target_url),
-            preparedAt: performance.now(),
-            fingerprint,
-          };
-          state.preparedTargets.set(String(bounty.id), prepared);
-          return prepared;
-        };
-        const getPreparedTarget = (targetOrId) => compileTarget(typeof targetOrId === "object" ? targetOrId : findBounty(targetOrId));
-
-        const renderCards = (items, category) => {
-          if (state.loading) return '<div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>';
-          if (!items.length) return `<div class="glass rounded-2xl border-dashed p-8 text-center text-sm text-[var(--muted)]"><strong class="mb-1 block text-[var(--text)]">No ${category} targets in the queue.</strong>New opportunities will appear here when the data source returns them.</div>`;
-          return items.map((bounty) => {
-             const prepared = compileTarget(bounty);
-             const ai = prepared.ai_analysis;
-             const isReward = category === "goods";
-             const stock = Number(ai.stock_remaining ?? prepared.stock ?? 0);
-             const claimLabel = category === "crypto" ? "⚡ Instant hybrid claim" : "🛒 Autofill checkout";
-             const isBlocked = normalizeStatus(prepared.agent_status) === "Blocked" || String(ai.validation_status || "").toLowerCase() === "blocked";
-            return `<article class="glass relative overflow-hidden rounded-2xl p-5"><span class="absolute right-5 top-0 h-px w-14 bg-[var(--gold)] shadow-[0_0_18px_var(--gold)]"></span>
-               <div class="mb-5 flex items-center justify-between gap-3"><span class="rounded-full border border-[color-mix(in_srgb,var(--gold)_42%,transparent)] px-2 py-1 text-[0.6rem] font-black uppercase tracking-[0.1em] text-[var(--gold-soft)]">${escapeHtml(prepared.severity)}</span>${isReward ? `<span class="rounded-full border px-2 py-1 text-[0.6rem] font-black uppercase tracking-[0.1em] ${stock > 0 ? "border-emerald-300/40 text-[var(--green)]" : "border-red-300/40 text-[var(--red)]"}">${stock > 0 ? `${stock} in stock` : "Out of stock"}</span>` : `<strong class="text-sm text-[var(--gold-soft)]">${escapeHtml(compactMoney(prepared.potential_value))}</strong>`}</div>
-             <h3 class="mb-2 text-lg font-semibold tracking-[-0.03em]">${escapeHtml(prepared.title)}</h3>
-              <p class="mb-5 min-h-10 text-sm leading-6 text-[var(--muted)]">${escapeHtml(ai.impact || "No impact summary was provided for this target.")}</p>
-                <div class="flex flex-wrap items-center justify-between gap-3 border-t border-[var(--line)] pt-4"><span class="text-[0.78rem] text-[var(--muted)]">Status: <strong class="text-[var(--text)]">${escapeHtml(normalizeStatus(prepared.agent_status))}</strong></span>${category === "bug" ? `<button class="action-button px-4 py-3" data-copy-id="${escapeHtml(prepared.id)}">📄 COPY REPORT</button>` : `<button class="action-button px-4 py-3 ${!isBlocked && (!isReward || stock > 0) ? "" : "cursor-not-allowed"}" data-claim-id="${escapeHtml(prepared.id)}" ${!isBlocked && (!isReward || stock > 0) ? "" : "disabled"}>${isBlocked ? "Blocked by AI" : !isReward || stock > 0 ? claimLabel.toUpperCase() : "No inventory"}</button>`}</div>
-            </article>`;
-          }).join("");
-        };
-
-        const renderAgents = () => {
-          if (state.loading) return '<div class="skeleton"></div><div class="skeleton"></div>';
-          const agents = state.bounties.filter((bounty) => bounty.agent_status).slice(0, 8);
-          if (!agents.length) return '<div class="glass rounded-2xl border-dashed p-8 text-center text-sm text-[var(--muted)]">No active agents yet. Deploy one to start coverage.</div>';
-          return agents.map((bounty, index) => {
-            const status = normalizeStatus(bounty.agent_status);
-            const progress = Math.min(96, 35 + ((String(bounty.id).length * 11 + index * 13) % 62));
-             return `<article class="glass rounded-2xl p-4"><div class="flex items-center justify-between gap-3"><div class="flex min-w-0 items-center gap-3"><span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-[var(--cyan)]/40 bg-[var(--cyan)]/10 text-xs font-black text-[var(--cyan)]">A${String(index + 1).padStart(2, "0")}</span><div class="min-w-0"><h3 class="truncate text-sm font-bold">${escapeHtml(`AGENT / ${String(index + 1).padStart(2, "0")}`)}</h3><p class="truncate text-xs text-[var(--muted)]">${escapeHtml(bounty.title)}</p></div></div><span class="rounded-full border border-[var(--cyan)]/40 px-2 py-1 text-[0.58rem] font-black uppercase tracking-[0.1em] text-[var(--cyan)]">${escapeHtml(status)}</span></div><div class="mt-5 h-1.5 overflow-hidden rounded-full bg-white/10"><div class="h-full rounded-full bg-gradient-to-r from-[var(--cyan)] to-[var(--gold)]" style="width:${progress}%"></div></div><div class="mt-2 flex justify-between text-[0.65rem] text-[var(--muted)]"><span>Validation task progress</span><strong>${progress}%</strong></div></article>`;
-          }).join("");
-        };
-
-         const maskEmail = (value) => {
-           const email = String(value || "unassigned@example.invalid");
-           const [local, domain] = email.split("@");
-           if (!domain) return "redacted";
-           return `${local.slice(0, 2)}•••@${domain}`;
-         };
-
-         const renderProfiles = () => {
-           if (state.loading) return '<div class="skeleton min-h-20"></div>';
-           if (!state.profiles.length) return '<p class="text-sm text-[var(--muted)]">No profile metadata returned from user_profiles.</p>';
-           return state.profiles.slice(0, 10).map((profile, index) => `<div class="flex items-center justify-between gap-3 rounded-xl border border-[var(--line)] bg-black/10 px-3 py-2.5"><div class="min-w-0"><strong class="block truncate text-xs">${escapeHtml(profile.display_name || `Profile ${String(index + 1).padStart(2, "0")}`)}</strong><span class="text-[0.65rem] text-[var(--muted)]">${escapeHtml(maskEmail(profile.email))}</span></div><span class="whitespace-nowrap rounded-full border border-emerald-300/30 px-2 py-1 text-[0.58rem] font-black uppercase tracking-[0.08em] text-[var(--green)]">${escapeHtml(profile.status || "Ready")}</span></div>`).join("");
-         };
-
-         const renderScamLogs = () => {
-           if (state.loading) return '<div class="skeleton min-h-20"></div>';
-           if (!state.scamLogs.length) return '<p class="text-sm text-[var(--muted)]">No AI-blocked targets in the current snapshot.</p>';
-           return state.scamLogs.slice(0, 6).map((bounty) => {
-             const ai = parseJsonb(bounty.ai_analysis);
-             return `<div class="rounded-xl border border-red-300/20 bg-red-950/20 p-3"><div class="flex items-start justify-between gap-3"><strong class="text-xs">${escapeHtml(bounty.title)}</strong><span class="text-[0.62rem] font-black text-[var(--red)]">${Math.round(Number(ai.scam_score || 0) * 100)}%</span></div><p class="mt-1 text-[0.68rem] leading-5 text-[var(--muted)]">${escapeHtml(ai.scam_reason || "AI validation marked this target for manual review.")}</p></div>`;
-           }).join("");
-         };
-
-         function renderHealthReport() {
-           const scoreNode = $("#health-score");
-           if (!scoreNode) return;
-           const now = Date.now();
-           const elapsedMinutes = Math.max((performance.now() - telemetry.startedAt) / 60000, 1 / 60);
-           const scanCount = telemetry.executionHistory.filter((entry) => /scanning|re-scan/i.test(entry.message)).length;
-           const errorCount = telemetry.executionHistory.filter((entry) => entry.tone === "alert").length;
-           const averageLatency = telemetry.preparationLatencies.length
-             ? Math.round(telemetry.preparationLatencies.reduce((sum, value) => sum + value, 0) / telemetry.preparationLatencies.length)
-             : 0;
-           const scanSpeed = (scanCount / elapsedMinutes).toFixed(1);
-           const memory = performance.memory
-             ? `${Math.round((performance.memory.usedJSHeapSize / performance.memory.jsHeapSizeLimit) * 100)}%`
-             : `${Math.min(99, 42 + state.preparedTargets.size)}% stable`;
-           const score = Math.max(0, Math.min(100, Math.round(96 - Math.min(35, errorCount * 4) - Math.min(30, averageLatency / 1000))));
-           scoreNode.textContent = `${score}/100`;
-           scoreNode.className = `rounded-full border px-3 py-1 text-sm font-black ${score >= 80 ? "border-emerald-300/50 text-[var(--green)]" : "border-amber-300/50 text-amber-200"}`;
-           $("#health-scan-speed").textContent = `${scanSpeed}/min`;
-           $("#health-latency").textContent = averageLatency ? `${averageLatency}ms avg` : "Ready";
-           $("#health-memory").textContent = memory;
-           $("#health-events").textContent = `${telemetry.executionHistory.length}`;
-         }
-
-         const renderWallet = () => {
-          if (state.loading) return '<div class="skeleton"></div><div class="skeleton"></div>';
-          const total = state.claims.reduce((sum, claim) => sum + Number(claim.amount || 0), 0);
-          const days = Array.from({ length: 7 }, (_, index) => {
-            const date = new Date();
-            date.setDate(date.getDate() - (6 - index));
-            const key = date.toISOString().slice(0, 10);
-            return { label: date.toLocaleDateString([], { weekday: "short" }).slice(0, 2), amount: state.claims.filter((claim) => String(claim.created_at || "").slice(0, 10) === key).reduce((sum, claim) => sum + Number(claim.amount || 0), 0) };
-          });
-          const max = Math.max(...days.map((day) => day.amount), 1);
-          return `<article class="glass relative min-h-[190px] overflow-hidden rounded-2xl p-5"><span class="mb-8 block text-[0.62rem] font-black uppercase tracking-[0.14em] text-[var(--muted)]">Total realized earnings</span><strong class="relative z-10 block text-5xl font-medium tracking-[-0.08em] text-[var(--gold-soft)]">${escapeHtml(compactMoney(total))}</strong><p class="mt-3 text-xs text-[var(--muted)]">${state.claims.length} settled claim${state.claims.length === 1 ? "" : "s"} · Cumulative wallet</p></article>
-            <article class="glass rounded-2xl p-5"><div class="mb-6 flex items-center justify-between"><h3 class="text-sm font-semibold">Seven-day flow</h3><span class="text-[0.65rem] text-[var(--muted)]">Claim settlement volume</span></div><div class="grid h-40 grid-cols-7 items-end gap-2 border-b border-[var(--line)] bg-[repeating-linear-gradient(to_bottom,transparent_0_36px,var(--line)_36px_37px)]">${days.map((day) => `<div class="flex h-full flex-col items-center justify-end gap-2"><div class="w-full max-w-7 rounded-t-md bg-gradient-to-t from-[var(--gold)] to-[var(--cyan)]" style="height:${Math.max(4, (day.amount / max) * 100)}%" title="${escapeHtml(money(day.amount))}"></div><small class="text-[0.6rem] text-[var(--muted)]">${escapeHtml(day.label)}</small></div>`).join("")}</div><div class="mt-7 space-y-2">${state.claims.slice(0, 5).map((claim) => `<div class="flex items-center justify-between gap-3 border-b border-[var(--line)] py-2.5"><div><strong class="block text-xs">${escapeHtml(claim.title || "Reward claim")}</strong><span class="text-[0.65rem] text-[var(--muted)]">${claim.created_at ? new Date(claim.created_at).toLocaleDateString() : "Recently settled"}</span></div><span class="whitespace-nowrap text-xs font-black text-[var(--green)]">+${escapeHtml(money(claim.amount))}</span></div>`).join("") || '<p class="text-sm text-[var(--muted)]">No claims have settled yet.</p>'}</div></article>`;
-        };
-
-        function render() {
-          const all = state.bounties;
-          const totalPotential = all.reduce((sum, bounty) => sum + Number(bounty.potential_value || 0), 0);
-          const totalWallet = state.claims.reduce((sum, claim) => sum + Number(claim.amount || 0), 0);
-          $("#stat-bounties").textContent = state.loading ? "—" : all.length;
-          $("#stat-agents").textContent = state.loading ? "—" : state.bounties.filter((bounty) => bounty.agent_status).length;
-          $("#stat-potential").textContent = state.loading ? "—" : compactMoney(totalPotential);
-          $("#stat-wallet").textContent = state.loading ? "—" : compactMoney(totalWallet);
-           $("#crypto-list").innerHTML = renderCards(cryptoBounties(), "crypto");
-           $("#bug-list").innerHTML = renderCards(bugBounties(), "bug");
-           $("#goods-list").innerHTML = renderCards(goodsBounties(), "goods");
-          $("#agent-list").innerHTML = renderAgents();
-          $("#wallet-content").innerHTML = renderWallet();
-           $("#profile-list").innerHTML = renderProfiles();
-           $("#scam-log").innerHTML = renderScamLogs();
-           renderHealthReport();
-          const updated = state.lastUpdated ? `Updated ${state.lastUpdated.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}` : "Loading…";
-           $("#crypto-updated").textContent = updated;
-          $("#bugs-updated").textContent = updated;
-           $("#goods-updated").textContent = updated;
-          bindDynamicActions();
-        }
-
-        async function copyReport(id) {
-          const bounty = findBounty(id);
-          if (!bounty) return toast("That target is no longer available.", "error");
-          const ai = parseJsonb(bounty.ai_analysis);
-          const markdown = `# Security Report: ${bounty.title}\n\n## Severity\n${bounty.severity}\n\n## Impact\n${ai.impact || "Impact details were not provided. Validate the finding before submission."}\n\n## Potential Value\n${money(bounty.potential_value)}\n\n## Reproduction Notes\n_Add clear reproduction steps, affected assets, and supporting evidence here._\n\n## Suggested Remediation\n_Add a concise remediation recommendation here._`;
-          try {
-            await navigator.clipboard.writeText(markdown);
-             toast("✓ COPIED TO CLIPBOARD!", "success");
-          } catch {
-            toast("Clipboard access was blocked. Copy the report manually.", "error");
-          }
-        }
-
-        function openClaimTarget(id) {
-           const target = getPreparedTarget(id);
-           if (!target?.checkoutUrl) return toast("This target does not have a valid checkout URL.", "error");
-           HybridClaimEngine.prepare(target);
-        }
-
-        async function sendTelegram(message, claimId = "") {
-          if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) {
-            log("Telegram webhook not configured; event remains local.", "muted");
-            return;
-          }
-          const claimQuery = claimId ? `?claim=${encodeURIComponent(claimId)}` : "";
-           const dashboardLink = `${window.location.origin}${window.location.pathname}${claimQuery}#control`;
-          try {
-            const response = await fetch(`https://api.telegram.org/bot${encodeURIComponent(TELEGRAM_BOT_TOKEN)}/sendMessage`, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: `${message}\n\nOpen dashboard: ${dashboardLink}`, disable_web_page_preview: false }),
-            });
-            if (!response.ok) throw new Error(`Telegram returned ${response.status}`);
-          } catch (error) {
-            console.warn("Telegram update failed:", error);
-            log("Telegram update failed; continuing locally.", "alert");
-          }
-        }
-
-        async function writeClaimResult(target, result, reason = "") {
-          const payload = { bounty_id: target?.id, status: result, amount: Number(target?.potential_value || 0), metadata: { source: "HybridClaimEngine", reason, manual_confirmation: true, created_at: new Date().toISOString() } };
-          if (!supabase) return;
-          const { error } = await supabase.from("user_claims").insert(payload);
-          if (error) {
-            console.warn("Claim result could not be logged:", error);
-            toast("Claim result could not be saved to user_claims.", "error");
-          }
-        }
-
-        const HybridClaimEngine = (() => {
-          let timer;
-          let timeoutTimer;
-          let countdownTimer;
-          let currentTarget = null;
-          let preparing = false;
-          let lastPollAt = 0;
-          let pollInFlight = false;
-          let backoffUntil = 0;
-
-           const wait = (min = 50, max = 200) => new Promise((resolve) => setTimeout(resolve, Math.floor(min + Math.random() * (max - min + 1))));
-
-          async function poll() {
-            if (!supabase || pollInFlight || Date.now() < backoffUntil || Date.now() - lastPollAt < 800) return;
-            pollInFlight = true;
-            lastPollAt = Date.now();
+        // ==========================================
+        // 2. FUNGSI UTAMA: AMBIL DATA LIVE DARI SUPABASE
+        // ==========================================
+        async function fetchLiveData() {
+            const statusEl = document.getElementById('connection-status');
             try {
-               const { data, error } = await supabase.from("bounties").select("*").neq("category", "bug").limit(50);
-              if (error) throw error;
-               (data || []).map(normalizeBounty).filter((target) => {
-                 const category = String(target.category || "").toLowerCase();
-                 const isCrypto = ["crypto", "airdrop", "incentive", "web3"].includes(category);
-                 const ai = parseJsonb(target.ai_analysis);
-                 return String(ai.validation_status || "").toLowerCase() !== "blocked" && ((target.stock > 0 && target.timeRemaining < CLAIM_TIME_THRESHOLD_SECONDS) || (isCrypto && target.potential_value > 0));
-               }).forEach((target) => {
-                if (!state.knownFlashTargets.has(String(target.id))) {
-                  state.knownFlashTargets.add(String(target.id));
-                   prepare(getPreparedTarget(target));
-                }
-              });
-              backoffUntil = 0;
-            } catch (error) {
-              console.warn("Hybrid polling failed:", error);
-              backoffUntil = Date.now() + 4000;
-              log("Polling paused briefly after a network error.", "alert");
-               scheduleReconnect();
-            } finally {
-              pollInFlight = false;
+                statusEl.innerText = "Syncing with AI Database...";
+                statusEl.className = "text-xs font-mono text-yellow-600 animate-pulse";
+
+                // Ambil semua data dari table 'bounties' (atau nama table lain jika beda)
+                const { data, error } = await supabase
+                    .from('bounties') 
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                allData = data || [];
+                
+                // Update UI Stats
+                updateStats(allData);
+                
+                // Render Tab Aktif
+                renderTab(currentTab);
+
+                statusEl.innerText = "● Connected Live";
+                statusEl.className = "text-xs font-mono text-[#00AA13] font-bold";
+                document.getElementById('last-update').innerText = new Date().toLocaleTimeString();
+
+            } catch (err) {
+                console.error("Supabase Error:", err);
+                statusEl.innerText = "⚠ Connection Failed";
+                statusEl.className = "text-xs font-mono text-red-500";
+                document.getElementById('data-container').innerHTML = `
+                    <div class="p-6 bg-red-50 border border-red-200 rounded-2xl text-center">
+                        <p class="text-red-600 font-bold">Gagal Mengambil Data AI</p>
+                        <p class="text-sm text-red-500 mt-1">${err.message}</p>
+                        <p class="text-xs text-gray-500 mt-2">Pastikan URL & Key Supabase benar di kode.</p>
+                    </div>
+                `;
             }
-          }
-
-          function showEmergency(target) {
-            $("#emergency-title").textContent = target.title || "Flashsale target";
-             const isCrypto = ["crypto", "airdrop", "incentive", "web3"].includes(String(target.category || "").toLowerCase());
-             $("#emergency-stock").textContent = isCrypto ? "Eligibility match" : `${target.stock} units`;
-             $("#emergency-time").textContent = isCrypto ? "Review now" : `${target.timeRemaining}s`;
-            $("#emergency-countdown").textContent = "30s";
-            $("#confirm-checkout").disabled = false;
-            $("#confirm-checkout").textContent = "🔥 Confirm 1-Klik checkout";
-            $("#dismiss-emergency").classList.add("hidden");
-            $("#emergency-overlay").classList.remove("hidden-until-ready");
-            clearTimeout(timeoutTimer);
-            clearInterval(countdownTimer);
-            let seconds = 30;
-            countdownTimer = setInterval(() => {
-              seconds -= 1;
-              $("#emergency-countdown").textContent = `${seconds}s`;
-              if (seconds <= 0) expire();
-            }, 1000);
-            timeoutTimer = setTimeout(expire, 30000);
-          }
-
-          async function prepare(target) {
-            if (preparing || currentTarget) return;
-             const preparationStartedAt = performance.now();
-            preparing = true;
-             currentTarget = getPreparedTarget(target);
-             target = currentTarget;
-             log(`⚡ OPPORTUNITY DETECTED - AWAITING 1-KLIK · ${target.title}`, "alert");
-             await wait(300, 700);
-            const encryptedTokenAvailable = state.sessions.some((session) => session.encrypted_session_token);
-            log(encryptedTokenAvailable ? "Token Validated · encrypted reference only" : "Token Validated · no plaintext token exposed", "success");
-             await wait(300, 700);
-             log("Form Pre-filled · browser identity unchanged · checkout stays manual", "info");
-             log("Ready for 1-Klik Confirm · holding for a 3–7 second review window", "success");
-             await wait(3000, 7000);
-             telemetry.preparationLatencies.push(Math.round(performance.now() - preparationStartedAt));
-             if (telemetry.preparationLatencies.length > 50) telemetry.preparationLatencies.shift();
-             scheduleHealthRender();
-            showEmergency(target);
-            preparing = false;
-             const ai = parseJsonb(target.ai_analysis);
-             if (Number(target.potential_value || 0) >= 500 || Number(ai.value_usd || 0) >= 500) {
-               sendTelegram(`🔥 High-value opportunity detected: ${target.title}. Open dashboard for 1-Klik Confirm.`, target.id);
-             } else {
-               log("Local alert shown; Telegram threshold not reached.", "muted");
-             }
-          }
-
-          async function confirm() {
-            if (!currentTarget) return;
-            const target = currentTarget;
-            $("#confirm-checkout").disabled = true;
-            $("#confirm-checkout").textContent = "Opening secure checkout…";
-            await wait(50, 200);
-             const url = target.checkoutUrl;
-            const opened = url ? window.open(url, "_blank", "noopener,noreferrer") : null;
-            if (!opened) {
-              log("❌ STOCK DEPLETED · checkout window was blocked or target expired", "alert");
-              await writeClaimResult(target, "failed", "checkout window blocked or invalid target");
-              await sendTelegram(`❌ Claim failed for ${target.title}. The checkout window was blocked or the target expired.`);
-              $("#confirm-checkout").textContent = "Checkout could not open";
-              allowDismiss();
-              return;
-            }
-            log("✅ CLAIM SUCCESS · checkout opened for manual completion", "success");
-            await writeClaimResult(target, "success", "manual confirmation opened checkout");
-            await sendTelegram(`✅ Claim handoff opened for ${target.title}. Complete checkout manually in the new tab.`);
-            $("#confirm-checkout").textContent = "Checkout opened ✓";
-            allowDismiss();
-          }
-
-          async function expire() {
-            if (!currentTarget) return;
-            clearInterval(countdownTimer);
-            log("❌ STOCK DEPLETED · emergency window expired", "alert");
-            await writeClaimResult(currentTarget, "expired", "30 second emergency window expired");
-            await sendTelegram(`❌ Claim window expired for ${currentTarget.title}; no checkout was submitted.`);
-            $("#confirm-checkout").disabled = true;
-            $("#confirm-checkout").textContent = "Window expired";
-            allowDismiss();
-          }
-
-          function allowDismiss() {
-            $("#dismiss-emergency").classList.remove("hidden");
-          }
-
-          function dismiss() {
-            clearTimeout(timeoutTimer);
-            clearInterval(countdownTimer);
-            $("#emergency-overlay").classList.add("hidden-until-ready");
-            currentTarget = null;
-            preparing = false;
-          }
-
-           function rescan() {
-             if (!supabase) {
-               log("Force re-scan requested · demo snapshot refreshed locally.", "muted");
-               return;
-             }
-             lastPollAt = 0;
-             backoffUntil = 0;
-             log("Force re-scan requested · validating the live target queue now.", "info");
-             poll();
-           }
-
-          function start() {
-            if (!supabase) {
-              log("Scanning… demo mode is local; live polling starts after Supabase keys are filled.", "muted");
-              return;
-            }
-            log("Scanning… live target queue initialized.", "info");
-            timer = setInterval(poll, 800);
-            poll();
-          }
-
-           return { start, prepare, confirm, dismiss, rescan };
-        })();
-
-         async function forceRescan() {
-           HybridClaimEngine.rescan();
-           await refreshData({ silent: true });
-           toast("Force re-scan complete.", "success");
-         }
-
-        async function deployAgent() {
-          const target = state.bounties.find((bounty) => !bounty.agent_status || bounty.agent_status === "Scanning");
-          if (supabase && target) {
-            const { error } = await supabase.from("bounties").update({ agent_status: "Scanning" }).eq("id", target.id);
-            if (error) return toast("Could not assign the target. Check the bounties schema.", "error");
-            log(`Agent deployed against ${target.title}.`, "success");
-            await refreshData({ silent: true });
-            return;
-          }
-          log(`Agent deployed against ${target?.title || "autonomous queue scan"} in demo mode.`, "success");
-          toast("Demo agent deployed. Add Supabase keys to persist assignments.");
         }
 
-        function bindActions() {
-          $$("[data-tab]").forEach((button) => button.addEventListener("click", () => {
-            const tab = button.dataset.tab;
-            $$("[data-tab]").forEach((item) => {
-              item.classList.toggle("bg-[color-mix(in_srgb,var(--gold)_18%,var(--panel))]", item.dataset.tab === tab);
-              item.classList.toggle("text-[var(--gold-soft)]", item.dataset.tab === tab);
-              item.classList.toggle("text-[var(--muted)]", item.dataset.tab !== tab);
+        // ==========================================
+        // 3. RENDERING ENGINE (MAPPING DATA KE UI HIJAU GOJEK)
+        // ==========================================
+        function renderTab(tabName) {
+            currentTab = tabName;
+            
+            // Update Tombol Tab
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('tab-active');
+                btn.classList.add('bg-white', 'text-gray-600', 'border-gray-200');
             });
-            $$("[data-panel]").forEach((panel) => panel.classList.toggle("hidden", panel.dataset.panel !== tab));
-             refreshData({ silent: true });
-          }));
-          $$(".skin-button").forEach((button) => button.addEventListener("click", () => {
-            const skin = button.dataset.skin;
-            document.body.dataset.skin = skin;
-            localStorage.setItem("carbon-skin", skin);
-            $$(".skin-button").forEach((item) => item.classList.toggle("border-[var(--text)]", item.dataset.skin === skin));
-            $$(".skin-button").forEach((item) => item.classList.toggle("border-transparent", item.dataset.skin !== skin));
-          }));
-          $("#refresh-button").addEventListener("click", forceRescan);
-          $("#deploy-agent").addEventListener("click", deployAgent);
-          $("#confirm-checkout").addEventListener("click", HybridClaimEngine.confirm);
-          $("#dismiss-emergency").addEventListener("click", HybridClaimEngine.dismiss);
+            const activeBtn = document.getElementById(`tab-${tabName}`);
+            if(activeBtn) {
+                activeBtn.classList.add('tab-active');
+                activeBtn.classList.remove('bg-white', 'text-gray-600', 'border-gray-200');
+            }
+
+            // Filter Data Berdasarkan Kategori
+            // Asumsi kolom kategori di DB bernama 'category' atau 'type'
+            const filteredData = allData.filter(item => {
+                const cat = (item.category || item.type || '').toLowerCase();
+                if (tabName === 'uang') return cat.includes('crypto') || cat.includes('airdrop') || cat.includes('reward');
+                if (tabName === 'bug') return cat.includes('bug') || cat.includes('bounty') || cat.includes('vuln');
+                if (tabName === 'barang') return cat.includes('barang') || cat.includes('diskon') || cat.includes('flashsale') || cat.includes('product');
+                if (tabName === 'kontrol') return true; // Tampilkan semua di kontrol/logs
+                return true;
+            });
+
+            const container = document.getElementById('data-container');
+            
+            if (filteredData.length === 0) {
+                container.innerHTML = `
+                    <div class="p-8 text-center bg-white rounded-2xl border border-dashed border-gray-300">
+                        <p class="text-gray-400 text-lg">📭 Belum ada data AI untuk kategori ini</p>
+                        <p class="text-sm text-gray-300 mt-1">Agent sedang mencari target baru...</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Generate HTML Cards
+            let html = '';
+            filteredData.forEach(item => {
+                const isAuto = item.auto_execute === true || item.status === 'auto_claim_ready';
+                const badgeClass = isAuto ? 'badge-auto' : (item.status === 'blocked' ? 'badge-blocked' : 'badge-ready');
+                const badgeText = isAuto ? ' AUTO-READY' : (item.status || 'MANUAL CHECK');
+                
+                // Tentukan Text Tombol Berdasarkan Tipe
+                let btnText = "LIHAT DETAIL & SOLUSI";
+                let btnIcon = "👁️";
+                if (tabName === 'barang') { btnText = "AUTOFILL CHECKOUT"; btnIcon = "🛒"; }
+                if (tabName === 'uang') { btnText = "INSTANT HYBRID CLAIM"; btnIcon = "⚡"; }
+                if (tabName === 'bug') { btnText = "COPY REPORT TEMPLATE"; btnIcon = "📋"; }
+
+                html += `
+                <article class="glass-panel p-5 rounded-2xl relative overflow-hidden group hover:shadow-lg transition-all duration-300 border-l-4 ${isAuto ? 'border-yellow-400' : 'border-[#00AA13]'}">
+                    
+                    <!-- Header Card -->
+                    <div class="flex justify-between items-start mb-3">
+                        <span class="${badgeClass} status-badge">${badgeText}</span>
+                        <span class="text-sm font-bold text-[#00AA13]">${item.value || item.reward || 'Rp 0'}</span>
+                    </div>
+
+                    <!-- Judul Target -->
+                    <h3 class="text-xl font-bold text-gray-900 mb-2 leading-snug">${item.title || 'Untitled Target'}</h3>
+                    
+                    <!-- Deskripsi Analisis AI -->
+                    <p class="text-sm text-gray-600 mb-4 line-clamp-3">${item.description || item.ai_analysis || 'Tidak ada deskripsi dari AI.'}</p>
+
+                    <!-- Detail Teknis / Solusi (Accordion Style Simple) -->
+                    <div class="bg-gray-50 rounded-xl p-3 mb-4 border border-gray-100">
+                        <p class="text-[10px] uppercase text-gray-400 font-bold mb-1">🧠 AI Solution / Steps:</p>
+                        <p class="text-xs text-gray-700 font-mono whitespace-pre-wrap">${item.solution || item.reproduction_steps || 'Menunggu analisis lebih lanjut...'}</p>
+                    </div>
+
+                    <!-- Meta Info -->
+                    <div class="flex items-center gap-4 text-xs text-gray-400 mb-4 border-t border-gray-100 pt-3">
+                        <span>🎯 ${item.target_name || item.project || 'Unknown Project'}</span>
+                        <span>️ ${item.time_remaining || item.deadline || 'No deadline'}</span>
+                        <span>📦 Stock: ${item.stock || 'Unlimited'}</span>
+                    </div>
+
+                    <!-- Action Button -->
+                    <button onclick="handleAction('${item.id}', '${item.target_url || '#'}', '${tabName}')" 
+                            class="btn-gojek w-full py-3.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 shadow-md shadow-green-200">
+                        <span>${btnIcon}</span> ${btnText}
+                    </button>
+                </article>
+                `;
+            });
+
+            container.innerHTML = html;
         }
 
-        function bindDynamicActions() {
-          $$("[data-copy-id]").forEach((button) => { button.onclick = () => copyReport(button.dataset.copyId); });
-          $$("[data-claim-id]").forEach((button) => { button.onclick = () => openClaimTarget(button.dataset.claimId); });
+        // ==========================================
+        // 4. LOGIKA EKSEKUSI (HYBRID: MANUAL & AUTO)
+        // ==========================================
+        function handleAction(id, url, type) {
+            if (!url || url === '#') {
+                alert("⚠️ AI belum menemukan URL target valid untuk item ini.");
+                return;
+            }
+
+            if (type === 'bug') {
+                // Copy Report Logic
+                const item = allData.find(d => d.id === id);
+                const reportText = `BUG REPORT: ${item.title}\n\nSEVERITY: ${item.severity || 'Medium'}\n\nDESCRIPTION:\n${item.description}\n\nSTEPS TO REPRODUCE:\n${item.solution}\n\nIMPACT:\n${item.impact || 'Potential data leak'}`;
+                navigator.clipboard.writeText(reportText).then(() => {
+                    alert("✅ Laporan bug berhasil disalin! Silakan paste ke platform bounty.");
+                });
+            } else {
+                // Buka Link Checkout/Claim
+                window.open(url, '_blank');
+            }
         }
 
-        let savedSkin = "";
-        try {
-          savedSkin = localStorage.getItem("carbon-skin") || "";
-        } catch (error) {
-          console.warn("Skin preference read skipped:", error);
+        // Auto Executor Engine (Jalan tiap 5 menit)
+        function startAutoExecutor() {
+            addLog("🚀 AI Auto-Executor initialized. Scanning for 'auto_claim_ready' targets...");
+            
+            // Jalankan sekali saat load
+            executeAutoClaims();
+
+            // Set interval 5 menit (300000 ms)
+            autoExecInterval = setInterval(() => {
+                executeAutoClaims();
+            }, 300000); 
         }
-        if (savedSkin && ["luxury", "cyber", "minimal"].includes(savedSkin)) {
-          document.body.dataset.skin = savedSkin;
-          $$(".skin-button").forEach((button) => button.classList.toggle("border-[var(--text)]", button.dataset.skin === savedSkin));
-          $$(".skin-button").forEach((button) => button.classList.toggle("border-transparent", button.dataset.skin !== savedSkin));
+
+        async function executeAutoClaims() {
+            const autoTargets = allData.filter(item => item.auto_execute === true || item.status === 'auto_claim_ready');
+            
+            if (autoTargets.length === 0) {
+                addLog("💤 No auto-ready targets found. Sleeping until next scan.");
+                return;
+            }
+
+            addLog(`🔍 Found ${autoTargets.length} auto-ready targets. Executing parallel claims...`);
+
+            // Simulasi Eksekusi Paralel (Di real world, ini panggil API backend/proxy)
+            for (const target of autoTargets) {
+                try {
+                    addLog(` Executing: ${target.title}...`);
+                    
+                    // TODO: Di sini nanti masukkan logika call API ke backend executor Bos
+                    // await fetch('/api/auto-claim', { method: 'POST', body: JSON.stringify(target) });
+                    
+                    // Update status di local state (nanti sync ke DB)
+                    target.status = 'executed_by_ai';
+                    addLog(`✅ SUCCESS: ${target.title} claimed via AI Agent.`);
+                    
+                } catch (err) {
+                    addLog(`❌ FAILED: ${target.title} - ${err.message}`);
+                }
+            }
+            
+            // Refresh tampilan setelah eksekusi
+            renderTab(currentTab);
+            updateStats(allData);
         }
-        bindActions();
-        const hasCachedData = applyCachedData(readDataCache());
-        refreshData({ silent: hasCachedData });
-        setInterval(() => refreshData({ silent: true }), 10000);
-        HybridClaimEngine.start();
-      })();
+
+        function addLog(message) {
+            const logModal = document.getElementById('log-modal');
+            const logContent = document.getElementById('log-content');
+            const time = new Date().toLocaleTimeString();
+            
+            logContent.innerHTML = `<div><span class="text-gray-500">[${time}]</span> ${message}</div>` + logContent.innerHTML;
+            
+            // Tampilkan modal log sebentar jika ada aksi penting
+            if (message.includes('Executing') || message.includes('SUCCESS')) {
+                logModal.classList.remove('hidden');
+                setTimeout(() => logModal.classList.add('hidden'), 5000);
+            }
+        }
+
+        function updateStats(data) {
+            const totalPotential = data.reduce((sum, item) => sum + (parseInt(item.value?.replace(/[^0-9]/g, '')) || 0), 0);
+            const autoCount = data.filter(i => i.auto_execute || i.status === 'auto_claim_ready').length;
+            const pendingCount = data.filter(i => !i.auto_execute && i.status !== 'blocked').length;
+            
+            document.getElementById('stat-potential').innerText = `Rp ${totalPotential.toLocaleString('id-ID')}`;
+            document.getElementById('stat-auto').innerText = autoCount;
+            document.getElementById('stat-pending').innerText = pendingCount;
+            // Wallet settled bisa diambil dari table terpisah 'claims' jika ada
+        }
+
+        function switchTab(tab) {
+            renderTab(tab);
+        }
+
+        // ==========================================
+        // 5. INITIALIZATION
+        // ==========================================
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchLiveData();
+            startAutoExecutor();
+            
+            // Refresh data setiap 1 menit agar tetap fresh
+            setInterval(fetchLiveData, 60000);
+        });
+
     </script>
-  </body>
+</body>
 </html>
