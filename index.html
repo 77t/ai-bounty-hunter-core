@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teguh Hunter - Final Gold Edition</title>
+    <title>Teguh Hunter - Master Chef Edition</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Supabase JS -->
@@ -16,46 +16,64 @@
         ::-webkit-scrollbar-thumb { background: #0066cc; border-radius: 10px; }
         
         .glass-panel {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(0, 102, 204, 0.15);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04);
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
+            transition: all 0.3s ease;
         }
+        .glass-panel:hover { transform: translateY(-4px); box-shadow: 0 20px 50px rgba(0, 102, 204, 0.15); }
         
         .tab-active {
-            background-color: #0066cc !important;
+            background: linear-gradient(135deg, #0066cc 0%, #004499 100%);
             color: white !important;
             font-weight: bold;
             border-color: transparent !important;
-            box-shadow: 0 4px 12px rgba(0, 102, 204, 0.3);
+            box-shadow: 0 4px 15px rgba(0, 102, 204, 0.4);
         }
         
         .btn-primary {
             background: linear-gradient(135deg, #0066cc 0%, #004499 100%);
             color: white;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
         }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 102, 204, 0.4); }
-        .btn-primary:active { transform: scale(0.98); }
+        .btn-primary::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
+        }
+        .btn-primary:hover::after { left: 100%; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0, 102, 204, 0.5); }
         
-        .status-badge { padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; }
-        .badge-critical { background: #fee2e2; color: #dc2626; border: 1px solid #fecaca; }
-        .badge-high { background: #ffedd5; color: #ea580c; border: 1px solid #fed7aa; }
+        /* Badge Styles - PERBAIKAN WARNA */
+        .status-badge { padding: 5px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 900; letter-spacing: 0.5px; text-transform: uppercase; display: inline-flex; align-items: center; gap: 4px; }
+        .badge-critical { background: #fee2e2; color: #dc2626; border: 1px solid #fecaca; box-shadow: 0 2px 8px rgba(220, 38, 38, 0.15); }
+        .badge-high { background: #ffedd5; color: #ea580c; border: 1px solid #fed7aa; box-shadow: 0 2px 8px rgba(234, 88, 12, 0.15); }
+        .badge-medium { background: #fef3c7; color: #d97706; border: 1px solid #fde68a; }
         .badge-normal { background: #e0f2fe; color: #0284c7; border: 1px solid #bae6fd; }
+        .badge-low { background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
 
         @keyframes pulse-blue { 0% { box-shadow: 0 0 0 0 rgba(0, 102, 204, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(0, 102, 204, 0); } 100% { box-shadow: 0 0 0 0 rgba(0, 102, 204, 0); } }
         .live-indicator { animation: pulse-blue 2s infinite; }
+        
+        /* Smart Description Styling */
+        .smart-desc { font-size: 0.9rem; line-height: 1.6; color: #334155; font-weight: 500; }
+        .highlight-keyword { background: #eff6ff; color: #1d4ed8; padding: 2px 6px; border-radius: 4px; font-weight: bold; font-size: 0.85em; }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 font-sans min-h-screen pb-24">
+<body class="bg-slate-50 text-gray-800 font-sans min-h-screen pb-24">
 
     <!-- HEADER COMMANDER -->
-    <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-blue-100 p-4 flex justify-between items-center shadow-sm">
+    <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-xl border-b border-blue-50 p-4 flex justify-between items-center shadow-sm">
         <div class="flex items-center gap-3">
             <div class="w-10 h-10 bg-[#0066cc] rounded-xl flex items-center justify-center text-white font-bold text-xl live-indicator shadow-lg shadow-blue-200">T</div>
             <div>
                 <h1 class="font-extrabold text-lg leading-tight text-[#0066cc] tracking-tight">TEGUH HUNTER</h1>
-                <p class="text-[10px] text-gray-500 font-medium">Final Gold Edition • Live Data Connected</p>
+                <p class="text-[10px] text-gray-500 font-medium">Master Chef Edition • Premium Plating</p>
             </div>
         </div>
         <div class="text-right">
@@ -65,17 +83,17 @@
     </header>
 
     <!-- NAVIGATION TABS -->
-    <nav class="sticky top-[72px] z-40 bg-white border-b border-gray-100 overflow-x-auto whitespace-nowrap px-3 py-3 shadow-sm scrollbar-hide">
+    <nav class="sticky top-[72px] z-40 bg-white/80 backdrop-blur-md border-b border-gray-100 overflow-x-auto whitespace-nowrap px-3 py-3 shadow-sm scrollbar-hide">
         <div class="inline-flex gap-2 min-w-max">
             <button onclick="switchTab('uang')" id="tab-uang" class="tab-btn px-4 py-2 rounded-full text-xs border border-gray-200 bg-white text-gray-600 flex items-center gap-1.5 hover:bg-blue-50 transition-all">💰 Uang & Crypto</button>
-            <button onclick="switchTab('bug')" id="tab-bug" class="tab-btn px-4 py-2 rounded-full text-xs border border-gray-200 bg-white text-gray-600 flex items-center gap-1.5 hover:bg-blue-50 transition-all">️ Bug Bounty</button>
+            <button onclick="switchTab('bug')" id="tab-bug" class="tab-btn px-4 py-2 rounded-full text-xs border border-gray-200 bg-white text-gray-600 flex items-center gap-1.5 hover:bg-blue-50 transition-all">🛡️ Bug Bounty</button>
             <button onclick="switchTab('barang')" id="tab-barang" class="tab-btn tab-active px-4 py-2 rounded-full text-xs border border-transparent flex items-center gap-1.5 transition-all">📦 Barang & Diskon</button>
             <button onclick="switchTab('kontrol')" id="tab-kontrol" class="tab-btn px-4 py-2 rounded-full text-xs border border-gray-200 bg-white text-gray-600 flex items-center gap-1.5 hover:bg-blue-50 transition-all">⚙️ Kontrol & Logs</button>
         </div>
     </nav>
 
     <!-- MAIN CONTENT -->
-    <main class="p-4 max-w-4xl mx-auto space-y-5">
+    <main class="p-4 max-w-4xl mx-auto space-y-6">
         
         <!-- DASHBOARD SUMMARY CARDS -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
@@ -83,23 +101,22 @@
                 <p class="text-[10px] text-gray-500 uppercase tracking-wider font-bold">Total Potensi</p>
                 <h3 id="stat-potential" class="text-xl font-black text-gray-800 mt-1">---</h3>
             </div>
-            <div class="glass-panel p-4 rounded-2xl border-l-4 border-green-500">
-                <p class="text-[10px] text-gray-500 uppercase tracking-wider font-bold">Bug Critical</p>
-                <h3 id="stat-critical" class="text-xl font-black text-gray-800 mt-1">---</h3>
+            <div class="glass-panel p-4 rounded-2xl border-l-4 border-red-500">
+                <p class="text-[10px] text-gray-500 uppercase tracking-wider font-bold">Critical Bugs</p>
+                <h3 id="stat-critical" class="text-xl font-black text-red-600 mt-1">---</h3>
             </div>
             <div class="glass-panel p-4 rounded-2xl border-l-4 border-orange-500">
                 <p class="text-[10px] text-gray-500 uppercase tracking-wider font-bold">Flash Sales</p>
                 <h3 id="stat-sales" class="text-xl font-black text-gray-800 mt-1">---</h3>
             </div>
             <div class="glass-panel p-4 rounded-2xl border-l-4 border-purple-500">
-                <p class="text-[10px] text-gray-500 uppercase tracking-wider font-bold">Total Items</p>
+                <p class="text-[10px] text-gray-500 uppercase tracking-wider font-bold">Total Assets</p>
                 <h3 id="stat-total" class="text-xl font-black text-gray-800 mt-1">---</h3>
             </div>
         </div>
 
         <!-- DATA CONTAINER -->
         <div id="data-container" class="space-y-4 min-h-[300px]">
-            <!-- Initial Loading State -->
             <div class="animate-pulse space-y-4">
                 <div class="h-48 bg-gray-200 rounded-2xl"></div>
                 <div class="h-48 bg-gray-200 rounded-2xl"></div>
@@ -110,7 +127,7 @@
 
     <script>
         // ==========================================
-        // KONFIGURASI SUPABASE (API KEY SUDAH DIMASUKKAN!)
+        // KONFIGURASI SUPABASE
         // ==========================================
         const SUPABASE_URL = "https://xnpxiddpfqolfqchtadw.supabase.co"; 
         const SUPABASE_ANON_KEY = "sb_publishable_muxzmfs57Ec9OPmLuM-kHw_h65thgMQ"; 
@@ -120,110 +137,55 @@
         let allData = [];
 
         // ==========================================
-        // INITIALIZATION DENGAN ERROR CHECKING
+        // INITIALIZATION
         // ==========================================
         document.addEventListener('DOMContentLoaded', async () => {
             const statusEl = document.getElementById('connection-status');
-            
             try {
-                // 1. Cek apakah library Supabase tersedia
-                if (typeof window.supabase === 'undefined') {
-                    throw new Error("Supabase Library NOT loaded from CDN!");
-                }
-                
-                statusEl.innerText = "Initializing Client...";
-                
-                // 2. Buat client dengan API Key Bos
+                if (typeof window.supabase === 'undefined') throw new Error("Supabase Library NOT loaded!");
+                statusEl.innerText = "Initializing...";
                 supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-                
-                if (!supabaseClient) {
-                    throw new Error("Failed to create Supabase client instance.");
-                }
-                
-                statusEl.innerText = "Fetching Data...";
-                
-                // 3. Ambil data
+                if (!supabaseClient) throw new Error("Client creation failed.");
+                statusEl.innerText = "Fetching Gold Data...";
                 await fetchLiveData();
-                
             } catch (initError) {
-                console.error("Initialization Error:", initError);
                 statusEl.innerText = "⚠ Init Failed";
                 statusEl.className = "text-[10px] font-mono text-red-500 font-bold";
-                
-                document.getElementById('data-container').innerHTML = `
-                    <div class="p-8 bg-red-50 border border-red-200 rounded-2xl text-center shadow-sm">
-                        <p class="text-red-600 font-bold text-lg mb-2">SISTEM GAGAL DIMULAI</p>
-                        <p class="text-xs text-red-500 font-mono break-all bg-red-100 p-2 rounded">${initError.message}</p>
-                        <p class="text-[10px] text-gray-500 mt-2">Cek koneksi internet atau buka Console Browser (F12) untuk detail.</p>
-                        <button onclick="location.reload()" class="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg text-xs font-bold">RETRY</button>
-                    </div>
-                `;
-                
-                // Reset stats to show failure
-                document.getElementById('stat-potential').innerText = "ERR";
-                document.getElementById('stat-critical').innerText = "ERR";
-                document.getElementById('stat-sales').innerText = "ERR";
-                document.getElementById('stat-total').innerText = "ERR";
+                document.getElementById('data-container').innerHTML = `<div class="p-8 bg-red-50 rounded-2xl text-center"><p class="text-red-600 font-bold">${initError.message}</p><button onclick="location.reload()" class="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg text-xs">RETRY</button></div>`;
             }
         });
 
-        // ==========================================
-        // FUNGSI UTAMA: AMBIL DATA LIVE
-        // ==========================================
         async function fetchLiveData() {
             const statusEl = document.getElementById('connection-status');
-            
-            if (!supabaseClient) {
-                throw new Error("Supabase client not initialized");
-            }
-
+            if (!supabaseClient) return;
             try {
-                statusEl.innerText = "Syncing Gold Data...";
+                statusEl.innerText = "Syncing...";
                 statusEl.className = "text-[10px] font-mono text-yellow-600 animate-pulse font-bold";
-
-                const { data, error } = await supabaseClient
-                    .from('bounties') 
-                    .select('*')
-                    .order('created_at', { ascending: false });
-
-                if (error) {
-                    console.error("Supabase Query Error:", error);
-                    throw error;
-                }
-
-                allData = data || [];
                 
-                // Update UI
+                const { data, error } = await supabaseClient.from('bounties').select('*').order('created_at', { ascending: false });
+                if (error) throw error;
+                
+                allData = data || [];
                 updateStats(allData);
                 renderTab(currentTab);
-
+                
                 statusEl.innerText = "● Live Connected";
                 statusEl.className = "text-[10px] font-mono text-[#0066cc] font-bold";
                 document.getElementById('last-update').innerText = new Date().toLocaleTimeString();
-
             } catch (err) {
-                console.error("Fetch Data Error:", err);
-                statusEl.innerText = "⚠ Data Fetch Failed";
+                statusEl.innerText = "⚠ Fetch Failed";
                 statusEl.className = "text-[10px] font-mono text-red-500 font-bold";
-                
-                document.getElementById('data-container').innerHTML = `
-                    <div class="p-8 bg-orange-50 border border-orange-200 rounded-2xl text-center shadow-sm">
-                        <p class="text-orange-600 font-bold text-lg mb-2">Gagal Mengambil Data</p>
-                        <p class="text-xs text-orange-500 font-mono break-all bg-orange-100 p-2 rounded">${err.message}</p>
-                        <p class="text-[10px] text-gray-500 mt-2">Pastikan table 'bounties' ada dan RLS policy mengizinkan akses anon.</p>
-                        <button onclick="fetchLiveData()" class="mt-4 px-4 py-2 bg-orange-600 text-white rounded-lg text-xs font-bold">RETRY FETCH</button>
-                    </div>
-                `;
+                document.getElementById('data-container').innerHTML = `<div class="p-8 bg-orange-50 rounded-2xl text-center"><p class="text-orange-600 font-bold">Gagal Mengambil Data</p><p class="text-xs text-orange-500 font-mono mt-2">${err.message}</p><button onclick="fetchLiveData()" class="mt-4 px-4 py-2 bg-orange-600 text-white rounded-lg text-xs">RETRY FETCH</button></div>`;
             }
         }
 
         // ==========================================
-        // RENDERING ENGINE
+        // SMART RENDERING ENGINE (PERACIKAN UTAMA)
         // ==========================================
         function renderTab(tabName) {
             currentTab = tabName;
             
-            // Update Tombol Tab
+            // Update UI Tab
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.classList.remove('tab-active');
                 btn.classList.add('bg-white', 'text-gray-600', 'border-gray-200');
@@ -234,14 +196,15 @@
                 activeBtn.classList.remove('bg-white', 'text-gray-600', 'border-gray-200');
             }
 
-            // Filter Data
+            // Filter Data Cerdas
             const filteredData = allData.filter(item => {
                 const prog = (item.program || '').toLowerCase();
                 const analysis = item.ai_analysis ? JSON.stringify(item.ai_analysis).toLowerCase() : '';
+                const title = (item.title || '').toLowerCase();
                 
-                if (tabName === 'uang') return prog.includes('crypto') || prog.includes('finance') || analysis.includes('giveaway') || analysis.includes('airdrop');
-                if (tabName === 'bug') return prog.includes('hackerone') || prog.includes('stripe') || analysis.includes('xss') || analysis.includes('vulnerability');
-                if (tabName === 'barang') return prog.includes('shopee') || prog.includes('tokopedia') || prog.includes('electronics') || prog.includes('beauty');
+                if (tabName === 'uang') return prog.includes('crypto') || prog.includes('finance') || analysis.includes('giveaway') || analysis.includes('airdrop') || title.includes('cashback');
+                if (tabName === 'bug') return prog.includes('hackerone') || prog.includes('stripe') || analysis.includes('xss') || analysis.includes('vulnerability') || analysis.includes('rce') || analysis.includes('impact');
+                if (tabName === 'barang') return prog.includes('shopee') || prog.includes('tokopedia') || prog.includes('electronics') || prog.includes('beauty') || title.includes('flash sale') || title.includes('diskon');
                 if (tabName === 'kontrol') return true;
                 return true;
             });
@@ -249,64 +212,82 @@
             const container = document.getElementById('data-container');
             
             if (filteredData.length === 0) {
-                container.innerHTML = `
-                    <div class="p-10 text-center bg-white rounded-2xl border border-dashed border-gray-300 shadow-sm">
-                        <p class="text-gray-400 text-base font-medium">📭 Belum ada data untuk "${tabName.toUpperCase()}"</p>
-                        <p class="text-xs text-gray-300 mt-1">AI Agent sedang fokus mencari target lain...</p>
-                    </div>
-                `;
+                container.innerHTML = `<div class="p-10 text-center bg-white rounded-2xl border border-dashed border-gray-300 shadow-sm"><p class="text-gray-400 text-base font-medium">📭 Belum ada hidangan untuk "${tabName.toUpperCase()}"</p></div>`;
                 return;
             }
 
-            // Generate HTML Cards
+            // Generate Premium Cards
             let html = '';
             filteredData.forEach(item => {
-                // Parsing AI Analysis JSON
-                let type = 'General';
+                // 1. SMART BADGE DETECTION (Perbaikan Warna)
                 let risk = 'Normal';
+                let badgeClass = 'badge-normal';
+                
                 if (item.ai_analysis) {
                     try {
-                        const analysis = typeof item.ai_analysis === 'string' ? JSON.parse(item.ai_analysis) : item.ai_analysis;
-                        type = analysis.type || analysis.concept || 'General';
-                        risk = analysis.risk_level || analysis.urgency || 'Normal';
+                        const a = typeof item.ai_analysis === 'string' ? JSON.parse(item.ai_analysis) : item.ai_analysis;
+                        // Cek berbagai kemungkinan field risiko
+                        risk = a.risk_level || a.urgency || a.severity || 'Normal';
+                        
+                        // Normalisasi teks
+                        const r = risk.toLowerCase();
+                        if (r.includes('crit') || r.includes('p0') || r.includes('p1')) { badgeClass = 'badge-critical'; risk = 'CRITICAL'; }
+                        else if (r.includes('high') || r.includes('p2')) { badgeClass = 'badge-high'; risk = 'HIGH'; }
+                        else if (r.includes('med') || r.includes('p3')) { badgeClass = 'badge-medium'; risk = 'MEDIUM'; }
+                        else if (r.includes('low') || r.includes('info')) { badgeClass = 'badge-low'; risk = 'LOW'; }
+                        else { badgeClass = 'badge-normal'; risk = 'NORMAL'; }
                     } catch(e) {}
                 }
 
-                // Tentukan Badge Warna
-                let badgeClass = 'badge-normal';
-                if (risk === 'Critical' || risk === 'High') badgeClass = 'badge-critical';
-                else if (risk === 'Medium') badgeClass = 'badge-high';
+                // 2. SMART DESCRIPTION GENERATOR (Perbaikan Deskripsi Hambar)
+                let smartDesc = "AI Agent mendeteksi peluang menarik.";
+                if (item.ai_analysis) {
+                    try {
+                        const a = typeof item.ai_analysis === 'string' ? JSON.parse(item.ai_analysis) : item.ai_analysis;
+                        if (a.impact) smartDesc = `Dampak: <span class="highlight-keyword">${a.impact}</span>. Dapat direproduksi: ${a.reproducible ? 'Ya' : 'Tidak'}.`;
+                        else if (a.requirement) smartDesc = `Syarat: <span class="highlight-keyword">${a.requirement}</span>. Peserta saat ini: ${a.participants || 'N/A'}.`;
+                        else if (a.min_transaction) smartDesc = `Minimal transaksi: <span class="highlight-keyword">Rp ${parseInt(a.min_transaction).toLocaleString('id-ID')}</span>.`;
+                        else if (a.stock_remaining) smartDesc = `Stok tersisa: <span class="highlight-keyword">${a.stock_remaining} unit</span>. Segera ambil!`;
+                        else if (a.entries_so_far) smartDesc = `Kompetisi desain. Total entry: <span class="highlight-keyword">${a.entries_so_far}</span>. Kompleksitas: ${a.brief_complexity}.`;
+                    } catch(e) {}
+                }
 
-                // Tentukan Text Tombol
+                // 3. SMART BUTTON TEXT & ACTION
                 let btnText = "LIHAT DETAIL";
-                let btnIcon = "️";
-                if (tabName === 'barang') { btnText = "CHECKOUT SEKARANG"; btnIcon = "🛒"; }
-                if (tabName === 'uang') { btnText = "KLAIM REWARD"; btnIcon = ""; }
+                let btnIcon = "👁️";
+                if (tabName === 'barang') { btnText = "CHECKOUT SEKARANG"; btnIcon = ""; }
+                if (tabName === 'uang') { btnText = "KLAIM REWARD"; btnIcon = "⚡"; }
                 if (tabName === 'bug') { btnText = "COPY REPORT"; btnIcon = "📋"; }
 
+                // Format Reward
+                let rewardDisplay = item.reward || 'Rp 0';
+                if (rewardDisplay.includes('$') && !rewardDisplay.includes('USD')) rewardDisplay += ' USD';
+
                 html += `
-                <article class="glass-panel p-5 rounded-2xl relative overflow-hidden group hover:shadow-xl transition-all duration-300 border-l-4 ${badgeClass === 'badge-critical' ? 'border-red-500' : 'border-[#0066cc]'}">
+                <article class="glass-panel p-5 rounded-2xl relative overflow-hidden group border-l-4 ${badgeClass === 'badge-critical' ? 'border-red-500' : badgeClass === 'badge-high' ? 'border-orange-500' : 'border-[#0066cc]'}">
                     
                     <div class="flex justify-between items-start mb-3">
-                        <span class="${badgeClass} status-badge">${risk.toUpperCase()}</span>
-                        <span class="text-sm font-black text-[#0066cc]">${item.reward || 'Rp 0'}</span>
+                        <span class="${badgeClass} status-badge">
+                            ${risk === 'CRITICAL' ? '🔴' : risk === 'HIGH' ? '🟠' : '🔵'} ${risk}
+                        </span>
+                        <span class="text-sm font-black text-[#0066cc]">${rewardDisplay}</span>
                     </div>
 
                     <h3 class="text-lg font-black text-gray-900 mb-2 leading-snug">${item.title || item.program || 'Untitled Target'}</h3>
                     
-                    <p class="text-sm text-gray-600 mb-4 line-clamp-3">${item.description || type + ' detected by AI Agent.'}</p>
+                    <p class="smart-desc mb-4">${smartDesc}</p>
 
-                    <div class="bg-gray-50 rounded-xl p-3 mb-4 border border-gray-100">
-                        <p class="text-[9px] uppercase text-gray-400 font-bold mb-1 tracking-wider">🧠 AI Analysis:</p>
-                        <p class="text-xs text-gray-700 font-mono whitespace-pre-wrap leading-relaxed">${JSON.stringify(item.ai_analysis, null, 2) || 'No detailed analysis available.'}</p>
+                    <div class="bg-slate-50 rounded-xl p-3 mb-4 border border-slate-100">
+                        <p class="text-[9px] uppercase text-slate-400 font-bold mb-1 tracking-wider">🧠 Raw AI Analysis:</p>
+                        <pre class="text-[10px] text-slate-600 font-mono whitespace-pre-wrap leading-relaxed max-h-24 overflow-y-auto">${JSON.stringify(item.ai_analysis, null, 2) || 'No raw data.'}</pre>
                     </div>
 
                     <div class="flex items-center gap-3 text-[10px] text-gray-400 mb-4 border-t border-gray-100 pt-3">
                         <span class="flex items-center gap-1">🎯 ${item.program || 'Unknown Program'}</span>
-                        <span class="flex items-center gap-1">📅 ${new Date(item.created_at).toLocaleDateString()}</span>
+                        <span class="flex items-center gap-1"> ${new Date(item.created_at).toLocaleDateString()}</span>
                     </div>
 
-                    <button onclick="handleAction('${item.id}', '${item.target_url || '#'}', '${tabName}')" 
+                    <button onclick="handleAction('${item.id}', '${item.target_url || ''}', '${tabName}')" 
                             class="btn-primary w-full py-3.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow-md shadow-blue-200">
                         <span>${btnIcon}</span> ${btnText}
                     </button>
@@ -318,22 +299,31 @@
         }
 
         // ==========================================
-        // LOGIKA EKSEKUSI
+        // SMART ACTION HANDLER (Anti-404)
         // ==========================================
         function handleAction(id, url, type) {
-            if (!url || url === '#') {
-                alert("⚠️ AI belum menemukan URL target valid.");
+            if (!url || url === '#' || url === 'null') {
+                alert("⚠️ AI belum menemukan URL target valid untuk item ini.");
                 return;
             }
 
             if (type === 'bug') {
                 const item = allData.find(d => d.id === id);
-                const reportText = `BUG REPORT: ${item.title}\n\nPROGRAM: ${item.program}\n\nANALYSIS:\n${JSON.stringify(item.ai_analysis)}\n\nURL: ${url}`;
+                const reportText = `BUG REPORT: ${item.title}\n\nPROGRAM: ${item.program}\nSEVERITY: ${item.ai_analysis?.risk_level || 'N/A'}\n\nANALYSIS:\n${JSON.stringify(item.ai_analysis, null, 2)}\n\nURL: ${url}`;
                 navigator.clipboard.writeText(reportText).then(() => {
-                    alert("✅ Laporan bug berhasil disalin!");
+                    alert("✅ Laporan bug berhasil disalin ke clipboard!");
+                }).catch(() => {
+                    alert("Gagal menyalin. Silakan copy manual.");
                 });
             } else {
-                window.open(url, '_blank');
+                // Smart Link Handler: Cek apakah URL valid sebelum dibuka
+                try {
+                    const urlObj = new URL(url);
+                    // Buka di tab baru
+                    window.open(url, '_blank');
+                } catch (e) {
+                    alert("❌ Link target tidak valid atau rusak.");
+                }
             }
         }
 
@@ -344,24 +334,6 @@
             }, 0);
             
             const criticalCount = data.filter(i => {
-                const a = i.ai_analysis;
-                return a && (a.risk_level === 'Critical' || a.urgency === 'High');
-            }).length;
-
-            const salesCount = data.filter(i => 
-                (i.program || '').toLowerCase().includes('shopee') || 
-                (i.program || '').toLowerCase().includes('tokopedia')
-            ).length;
-
-            document.getElementById('stat-potential').innerText = `Rp ${totalPotential.toLocaleString('id-ID')}`;
-            document.getElementById('stat-critical').innerText = criticalCount;
-            document.getElementById('stat-sales').innerText = salesCount;
-            document.getElementById('stat-total').innerText = data.length;
-        }
-
-        function switchTab(tab) {
-            renderTab(tab);
-        }
-    </script>
-</body>
-</html>
+                if (!i.ai_analysis) return false;
+                const a = typeof i.ai_analysis === 'string' ? JSON.parse(i.ai_analysis) : i.ai_analysis;
+                cons
