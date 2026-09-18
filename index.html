@@ -69,10 +69,10 @@
     <!-- NAVIGATION TABS -->
     <nav class="sticky top-[72px] z-40 bg-white border-b border-gray-100 overflow-x-auto whitespace-nowrap px-3 py-3 shadow-sm scrollbar-hide">
         <div class="inline-flex gap-2 min-w-max">
-            <button onclick="switchTab('uang')" id="tab-uang" class="tab-btn px-4 py-2 rounded-full text-xs border border-gray-200 bg-white text-gray-600 flex items-center gap-1.5 hover:bg-green-50 transition-all"> Uang & Crypto</button>
-            <button onclick="switchTab('bug')" id="tab-bug" class="tab-btn px-4 py-2 rounded-full text-xs border border-gray-200 bg-white text-gray-600 flex items-center gap-1.5 hover:bg-green-50 transition-all">️ Bug Bounty</button>
+            <button onclick="switchTab('uang')" id="tab-uang" class="tab-btn px-4 py-2 rounded-full text-xs border border-gray-200 bg-white text-gray-600 flex items-center gap-1.5 hover:bg-green-50 transition-all">💰 Uang & Crypto</button>
+            <button onclick="switchTab('bug')" id="tab-bug" class="tab-btn px-4 py-2 rounded-full text-xs border border-gray-200 bg-white text-gray-600 flex items-center gap-1.5 hover:bg-green-50 transition-all">🛡️ Bug Bounty</button>
             <button onclick="switchTab('barang')" id="tab-barang" class="tab-btn tab-active px-4 py-2 rounded-full text-xs border border-transparent flex items-center gap-1.5 transition-all">📦 Barang & Diskon</button>
-            <button onclick="switchTab('kontrol')" id="tab-kontrol" class="tab-btn px-4 py-2 rounded-full text-xs border border-gray-200 bg-white text-gray-600 flex items-center gap-1.5 hover:bg-green-50 transition-all">️ Kontrol & Logs</button>
+            <button onclick="switchTab('kontrol')" id="tab-kontrol" class="tab-btn px-4 py-2 rounded-full text-xs border border-gray-200 bg-white text-gray-600 flex items-center gap-1.5 hover:bg-green-50 transition-all">⚙️ Kontrol & Logs</button>
         </div>
     </nav>
 
@@ -122,7 +122,7 @@
 
     <script>
         // ==========================================
-        // 1. KONFIGURASI SUPABASE (WAJIB DIISI BOS!)
+        // 1. KONFIGURASI SUPABASE (SUDAH DIISI OTOMATIS!)
         // ==========================================
         const SUPABASE_URL = "https://xnpxiddpfqolfqchtadw.supabase.co"; 
         const SUPABASE_ANON_KEY = "sb_pub1shable_muxzmf57Ec9OPmLuM-kHw_h65thgMQ"; 
@@ -150,7 +150,17 @@
                     .select('*')
                     .order('created_at', { ascending: false });
 
-                if (error) throw error;
+                if (error) {
+                    console.warn("Table 'bounties' not found or empty. Using fallback UI.");
+                    // Jika table belum ada, jangan crash. Tampilkan UI kosong yang rapi
+                    allData = [];
+                    updateStats([]);
+                    renderEmptyState();
+                    
+                    statusEl.innerText = " Waiting for AI Data...";
+                    statusEl.className = "text-[10px] font-mono text-orange-500 font-bold";
+                    return;
+                }
 
                 allData = data || [];
                 updateStats(allData);
@@ -169,7 +179,7 @@
                     <div class="p-8 bg-red-50 border border-red-200 rounded-2xl text-center shadow-sm">
                         <p class="text-red-600 font-bold text-lg mb-2">Gagal Mengambil Data AI</p>
                         <p class="text-xs text-red-500 font-mono break-all bg-red-100 p-2 rounded">${err.message}</p>
-                        <p class="text-[10px] text-gray-500 mt-3">Pastikan Table '${TABLE_NAME}' ada & Credential Supabase benar.</p>
+                        <p class="text-[10px] text-gray-500 mt-3">Pastikan Table '${TABLE_NAME}' sudah dibuat di Supabase.</p>
                     </div>
                 `;
             }
@@ -178,6 +188,17 @@
         // ==========================================
         // 3. RENDERING ENGINE (ORKESTRASI VISUAL)
         // ==========================================
+        function renderEmptyState() {
+            const container = document.getElementById('data-container');
+            container.innerHTML = `
+                <div class="p-10 text-center bg-white rounded-2xl border border-dashed border-gray-300 shadow-sm">
+                    <div class="text-4xl mb-3">🤖</div>
+                    <p class="text-gray-600 text-base font-bold mb-1">AI Agents Sedang Bekerja...</p>
+                    <p class="text-xs text-gray-400">Dashboard siap menerima data dari gudang Supabase.<br>Pastikan hunter_agent.py sudah berjalan.</p>
+                </div>
+            `;
+        }
+
         function renderTab(tabName) {
             currentTab = tabName;
             
@@ -213,6 +234,7 @@
                 `;
                 return;
             } else if (allData.length === 0) {
+                renderEmptyState();
                 return; 
             }
 
@@ -232,7 +254,7 @@
                 
                 let btnText = "LIHAT DETAIL & SOLUSI";
                 let btnIcon = "👁️";
-                if (tabName === 'barang') { btnText = "AUTOFILL CHECKOUT"; btnIcon = ""; }
+                if (tabName === 'barang') { btnText = "AUTOFILL CHECKOUT"; btnIcon = "🛒"; }
                 if (tabName === 'uang') { btnText = "INSTANT HYBRID CLAIM"; btnIcon = "⚡"; }
                 if (tabName === 'bug') { btnText = "COPY REPORT TEMPLATE"; btnIcon = "📋"; }
                 if (isProcessing) { btnText = "WAITING FOR AI..."; btnIcon = "⏳"; }
@@ -256,7 +278,7 @@
 
                     <div class="flex items-center gap-3 text-[10px] text-gray-400 mb-4 border-t border-gray-100 pt-3">
                         <span class="flex items-center gap-1">🎯 ${item.target_name || item.project || 'Unknown Project'}</span>
-                        <span class="flex items-center gap-1">⏳ ${item.time_remaining || item.deadline || 'No deadline'}</span>
+                        <span class="flex items-center gap-1"> ${item.time_remaining || item.deadline || 'No deadline'}</span>
                         <span class="flex items-center gap-1">📦 ${item.stock || 'Unlimited'}</span>
                     </div>
 
@@ -294,7 +316,7 @@
 
         // Auto Executor Engine (Jalan tiap 5 menit)
         function startAutoExecutor() {
-            addLog(" AI Auto-Executor initialized. Scanning for 'auto_claim_ready' targets...");
+            addLog("🚀 AI Auto-Executor initialized. Scanning for 'auto_claim_ready' targets...");
             executeAutoClaims();
             autoExecInterval = setInterval(executeAutoClaims, 300000); // 5 menit
         }
@@ -307,7 +329,7 @@
                 return;
             }
 
-            addLog(` Found ${autoTargets.length} auto-ready targets. Executing parallel claims...`);
+            addLog(`🔍 Found ${autoTargets.length} auto-ready targets. Executing parallel claims...`);
 
             for (const target of autoTargets) {
                 try {
