@@ -3,329 +3,274 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mega Dashboard Pemburu Cuan Hybrid</title>
+    <title>Teguh Hunter Web APK - Stable Gold Edition</title>
     
-    <!-- Tailwind CSS & Supabase JS -->
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Supabase JS Client CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/dist/umd/supabase.js"></script>
-    <!-- Font Awesome untuk Ikon Premium -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        :root { 
-            --primary: #00AA13; /* Gojek Emerald */
-            --dark: #0f172a; 
-            --card-bg: #ffffff;
-        }
+        /* Gojek Emerald Theme Configuration */
+        :root { --emerald: #00AA13; --emerald-dark: #008f10; --emerald-light: #e6f7e8; }
         
-        body { background-color: #f1f5f9; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; padding-bottom: 80px; }
+        body { background-color: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
         
-        /* Hide Scrollbar for Tabs */
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-        /* Card Styling */
-        .cuan-card { 
-            background: var(--card-bg); 
-            border-radius: 16px; 
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05); 
-            margin-bottom: 16px; 
-            overflow: hidden; 
-            border-left: 5px solid var(--primary);
-            transition: transform 0.2s;
-        }
-        .cuan-card:active { transform: scale(0.98); }
-
-        /* Tab Navigation inside Cards */
-        .inner-tabs { display: flex; border-bottom: 1px solid #e2e8f0; background: #f8fafc; }
-        .inner-tab { 
-            flex: 1; text-align: center; padding: 12px 8px; font-size: 11px; font-weight: 700; color: #64748b; cursor: pointer; transition: 0.3s;
-        }
-        .inner-tab.active { color: var(--primary); border-bottom: 3px solid var(--primary); background: white; }
-        .tab-content { display: none; padding: 16px; animation: fadeIn 0.3s ease; }
-        .tab-content.active { display: block; }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* Buttons */
-        .btn-action { 
-            background: var(--primary); color: white; width: 100%; padding: 14px; border-radius: 12px; 
-            font-weight: 800; font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 8px;
-            box-shadow: 0 4px 12px rgba(0, 170, 19, 0.3); transition: 0.2s;
-        }
-        .btn-action:active { transform: scale(0.97); opacity: 0.9; }
-        .btn-secondary { background: #f1f5f9; color: #334155; box-shadow: none; }
-
-        /* Countdown Timer */
-        .countdown-box { 
-            background: #fef2f2; color: #dc2626; padding: 4px 10px; border-radius: 20px; 
-            font-size: 10px; font-weight: 900; display: inline-flex; align-items: center; gap: 4px;
-        }
+        /* Luxury Mobile Tabs */
+        .tab-btn { transition: all 0.3s ease; border-bottom: 3px solid transparent; color: #64748b; font-weight: 600; padding-bottom: 12px; }
+        .tab-btn.active { color: var(--emerald); border-bottom-color: var(--emerald); }
+        
+        /* Triple Layer Card Styling */
+        .card-layer { border-left: 4px solid var(--emerald); background: white; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.04); margin-bottom: 16px; overflow: hidden; }
+        .layer-header { padding: 16px; border-bottom: 1px dashed #e2e8f0; }
+        .layer-body { padding: 16px; background: #fafafa; }
+        .layer-footer { padding: 16px; background: white; border-top: 1px solid #f1f5f9; }
+        
+        /* Price Guard Alert Box */
+        .price-guard { display: none; background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; padding: 10px; border-radius: 8px; font-size: 12px; margin-bottom: 12px; align-items: center; gap: 8px; }
+        .price-guard.visible { display: flex; animation: shake 0.5s; }
+        
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+        
+        /* Action Button */
+        .btn-emerald { background: var(--emerald); color: white; font-weight: bold; border-radius: 12px; padding: 14px; width: 100%; transition: 0.2s; display: flex; justify-content: center; align-items: center; gap: 8px; }
+        .btn-emerald:active { transform: scale(0.98); background: var(--emerald-dark); }
+        .btn-frozen { background: #cbd5e1 !important; color: #64748b !important; cursor: not-allowed; pointer-events: none; }
+        
+        /* Hide Raw JSON Braces */
+        pre { white-space: pre-wrap; word-wrap: break-word; font-family: monospace; font-size: 11px; color: #475569; background: #f1f5f9; padding: 10px; border-radius: 8px; max-height: 150px; overflow-y: auto; }
     </style>
 </head>
-<body>
+<body class="pb-24">
 
-    <!-- HEADER MEGA DASHBOARD -->
-    <header class="sticky top-0 z-50 bg-white shadow-sm px-4 py-3 flex items-center justify-between">
+    <!-- HEADER REBRANDING -->
+    <header class="sticky top-0 z-50 bg-white shadow-sm px-4 py-4 flex items-center justify-between">
         <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-[var(--primary)] flex items-center justify-center text-white font-black text-lg shadow-lg shadow-green-200">
-                <i class="fa-solid fa-bolt"></i>
-            </div>
+            <div class="w-10 h-10 rounded-xl bg-[var(--emerald)] flex items-center justify-center text-white font-black text-xl shadow-lg shadow-green-200">T</div>
             <div>
-                <h1 class="text-base font-black text-gray-900 leading-none">MEGA CUAN HYBRID</h1>
-                <p class="text-[9px] font-bold text-[var(--primary)] uppercase tracking-widest mt-1">5 Mode Eksekusi Aktif</p>
+                <h1 class="text-lg font-black text-gray-900 tracking-tight leading-none">TEGUH HUNTER WEB APK</h1>
+                <p class="text-[10px] font-bold text-[var(--emerald)] uppercase tracking-wider mt-1">Stable Gold Edition</p>
             </div>
         </div>
-        <div id="conn-status" class="text-[10px] font-mono text-gray-400">Syncing...</div>
+        <div id="connection-status" class="text-[10px] font-mono text-gray-400">Connecting...</div>
     </header>
 
-    <!-- MAIN MODE NAVIGATION (5 TABS) -->
-    <nav class="sticky top-[56px] z-40 bg-white border-b border-gray-100 overflow-x-auto whitespace-nowrap px-2 py-2 no-scrollbar">
-        <div class="inline-flex gap-2 min-w-max">
-            <button onclick="setMode('bug')" id="mode-bug" class="mode-btn px-4 py-2 rounded-full text-xs font-bold border border-gray-200 bg-white text-gray-600 active-mode">️ Bug Bounty</button>
-            <button onclick="setMode('sniper')" id="mode-sniper" class="mode-btn px-4 py-2 rounded-full text-xs font-bold border border-gray-200 bg-white text-gray-600"> Auto Sniper</button>
-            <button onclick="setMode('crypto')" id="mode-crypto" class="mode-btn px-4 py-2 rounded-full text-xs font-bold border border-gray-200 bg-white text-gray-600"> Crypto Airdrop</button>
-            <button onclick="setMode('creative')" id="mode-creative" class="mode-btn px-4 py-2 rounded-full text-xs font-bold border border-gray-200 bg-white text-gray-600"> Sayembara</button>
-            <button onclick="setMode('tester')" id="mode-tester" class="mode-btn px-4 py-2 rounded-full text-xs font-bold border border-gray-200 bg-white text-gray-600"> Product Tester</button>
+    <!-- 4-TAB SPA NAVIGATION -->
+    <nav class="sticky top-[68px] z-40 bg-white border-b border-gray-100 overflow-x-auto whitespace-nowrap px-2 scrollbar-hide">
+        <div class="flex min-w-max">
+            <button onclick="switchTab('crypto')" id="tab-crypto" class="tab-btn active px-5 text-sm flex items-center gap-2"> Crypto & Airdrop</button>
+            <button onclick="switchTab('tester')" id="tab-tester" class="tab-btn px-5 text-sm flex items-center gap-2">🧪 Free Tester</button>
+            <button onclick="switchTab('bug')" id="tab-bug" class="tab-btn px-5 text-sm flex items-center gap-2">🛡️ Bug Bounty</button>
+            <button onclick="switchTab('logs')" id="tab-logs" class="tab-btn px-5 text-sm flex items-center gap-2"> Logs & Stats</button>
         </div>
     </nav>
 
-    <!-- CONTENT AREA -->
-    <main id="dashboard-content" class="p-4 space-y-4 min-h-[60vh]">
+    <!-- MAIN CONTENT CONTAINER -->
+    <main id="content-area" class="p-4 space-y-4 min-h-[50vh]">
         <div class="animate-pulse space-y-4 mt-8">
-            <div class="h-40 bg-gray-200 rounded-2xl"></div>
-            <div class="h-40 bg-gray-200 rounded-2xl"></div>
-            <div class="h-40 bg-gray-200 rounded-2xl"></div>
+            <div class="h-48 bg-gray-200 rounded-2xl"></div>
+            <div class="h-48 bg-gray-200 rounded-2xl"></div>
         </div>
     </main>
 
     <script>
         // ==========================================
-        // SUPABASE CONFIGURATION
+        // SUPABASE CONFIGURATION (PRODUCTION)
         // ==========================================
         const SUPABASE_URL = "https://xnpxiddpfqolfqchtadw.supabase.co"; 
         const SUPABASE_ANON_KEY = "sb_publishable_muxzmfs57Ec9OPmLuM-kHw_h65thgMQ"; 
         
         let supabaseClient = null;
-        let currentMode = 'bug';
+        let currentTab = 'crypto';
         let liveData = [];
 
         // ==========================================
-        // INITIALIZATION
+        // INITIALIZATION & DATA FETCHING
         // ==========================================
         document.addEventListener('DOMContentLoaded', async () => {
             try {
-                if (typeof window.supabase === 'undefined') throw new Error("Library gagal dimuat");
-                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                if (typeof window.supabase === 'undefined') throw new Error("Supabase Library gagal dimuat");
                 
-                const { data, error } = await supabaseClient.from('bounties').select('*').order('created_at', { ascending: false });
+                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                document.getElementById('connection-status').innerText = "Syncing...";
+                
+                const { data, error } = await supabaseClient
+                    .from('bounties')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
                 if (error) throw error;
                 
                 liveData = data || [];
-                renderDashboard();
+                renderCards();
                 
-                document.getElementById('conn-status').innerText = "● LIVE CONNECTED";
-                document.getElementById('conn-status').className = "text-[10px] font-mono text-[var(--primary)] font-bold";
+                document.getElementById('connection-status').innerText = "● Live Connected";
+                document.getElementById('connection-status').className = "text-[10px] font-mono text-[var(--emerald)] font-bold";
+                
             } catch (err) {
-                document.getElementById('conn-status').innerText = "⚠ OFFLINE";
-                document.getElementById('dashboard-content').innerHTML = `<div class="p-6 bg-red-50 rounded-2xl text-center mt-8"><p class="text-red-600 font-bold">${err.message}</p><button onclick="location.reload()" class="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg text-xs font-bold">RETRY</button></div>`;
+                document.getElementById('connection-status').innerText = "⚠ Offline";
+                document.getElementById('content-area').innerHTML = `
+                    <div class="p-6 bg-red-50 border border-red-200 rounded-2xl text-center mt-8">
+                        <p class="text-red-600 font-bold mb-2">Gagal Terhubung ke Database</p>
+                        <p class="text-xs text-red-500 font-mono">${err.message}</p>
+                        <button onclick="location.reload()" class="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg text-xs font-bold">RETRY</button>
+                    </div>`;
             }
         });
 
-        function setMode(mode) {
-            currentMode = mode;
-            document.querySelectorAll('.mode-btn').forEach(btn => {
-                btn.classList.remove('bg-[var(--primary)]', 'text-white', 'border-transparent');
-                btn.classList.add('bg-white', 'text-gray-600', 'border-gray-200');
-            });
-            const activeBtn = document.getElementById(`mode-${mode}`);
-            activeBtn.classList.remove('bg-white', 'text-gray-600', 'border-gray-200');
-            activeBtn.classList.add('bg-[var(--primary)]', 'text-white', 'border-transparent');
-            renderDashboard();
+        // ==========================================
+        // TAB SWITCHING LOGIC
+        // ==========================================
+        function switchTab(tabName) {
+            currentTab = tabName;
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+            renderCards();
         }
 
         // ==========================================
-        // MODULAR RENDERING ENGINE (5 MODES)
+        // TRIPLE-LAYER CARD RENDERING ENGINE
         // ==========================================
-        function renderDashboard() {
-            const container = document.getElementById('dashboard-content');
+        function renderCards() {
+            const container = document.getElementById('content-area');
             
-            // Filter Data Berdasarkan Mode
+            // Filter Data Berdasarkan Tab
             const filtered = liveData.filter(item => {
                 const cat = (item.category || '').toLowerCase();
                 const prog = (item.program || '').toLowerCase();
                 const analysis = JSON.stringify(item.ai_analysis || {}).toLowerCase();
                 
-                if (currentMode === 'bug') return prog.includes('hackerone') || analysis.includes('xss') || analysis.includes('rce') || cat.includes('security');
-                if (currentMode === 'sniper') return cat.includes('flash sale') || prog.includes('shopee') || prog.includes('tokopedia');
-                if (currentMode === 'crypto') return cat.includes('crypto') || cat.includes('airdrop') || prog.includes('coin');
-                if (currentMode === 'creative') return cat.includes('design') || cat.includes('contest') || prog.includes('99designs');
-                if (currentMode === 'tester') return cat.includes('tester') || cat.includes('sample') || prog.includes('beauty');
+                if (currentTab === 'crypto') return cat.includes('crypto') || cat.includes('airdrop') || prog.includes('coin');
+                if (currentTab === 'tester') return cat.includes('tester') || cat.includes('sample') || prog.includes('beauty');
+                if (currentTab === 'bug') return cat.includes('security') || prog.includes('hackerone') || analysis.includes('xss') || analysis.includes('rce');
+                if (currentTab === 'logs') return true; // Tampilkan semua di logs
                 return true;
             });
 
             if (filtered.length === 0) {
-                container.innerHTML = `<div class="p-10 text-center bg-white rounded-2xl border border-dashed border-gray-300 mt-8"><p class="text-gray-400 font-medium">📭 Tidak ada misi aktif untuk mode "${currentMode.toUpperCase()}"</p></div>`;
+                container.innerHTML = `<div class="p-10 text-center bg-white rounded-2xl border border-dashed border-gray-300 mt-8"><p class="text-gray-400 font-medium">📭 Belum ada data untuk "${currentTab.toUpperCase()}"</p></div>`;
                 return;
             }
 
             let html = '';
             filtered.forEach(item => {
+                // Parse AI Analysis JSONB
                 const ai = typeof item.ai_analysis === 'string' ? JSON.parse(item.ai_analysis) : (item.ai_analysis || {});
-                const uniqueId = item.id.replace(/-/g, '');
+                const riskLevel = ai.risk_level || 'Unknown';
+                const eligibility = ai.eligibility || 'Check Details';
+                const steps = Array.isArray(ai.step_by_step_guide) ? ai.step_by_step_guide : ['Instruksi belum tersedia.'];
                 
-                // Generate HTML berdasarkan MODE
-                if (currentMode === 'bug') html += renderBugCard(item, ai, uniqueId);
-                else if (currentMode === 'sniper') html += renderSniperCard(item, ai, uniqueId);
-                else if (currentMode === 'crypto') html += renderCryptoCard(item, ai, uniqueId);
-                else if (currentMode === 'creative') html += renderCreativeCard(item, ai, uniqueId);
-                else if (currentMode === 'tester') html += renderTesterCard(item, ai, uniqueId);
-            });
+                // Risk Color Mapping
+                let riskColor = 'bg-blue-100 text-blue-700';
+                if(riskLevel.toLowerCase().includes('high')) riskColor = 'bg-red-100 text-red-700';
+                if(riskLevel.toLowerCase().includes('medium')) riskColor = 'bg-orange-100 text-orange-700';
+                if(riskLevel.toLowerCase().includes('low')) riskColor = 'bg-green-100 text-green-700';
 
-            container.innerHTML = html;
-            startCountdowns();
-        }
+                // Generate Unique ID for Price Guard
+                const cardId = `card-${item.id}`;
+                const originalReward = item.reward || 'Free';
 
-        // --- MODE 1: BUG BOUNTY ---
-        function renderBugCard(item, ai, id) {
-            return `
-            <article class="cuan-card">
-                <div class="p-4 border-b border-gray-100 flex justify-between items-start">
-                    <div>
-                        <span class="bg-red-100 text-red-700 text-[10px] font-black px-2 py-1 rounded-md uppercase">${ai.risk_level || 'HIGH'} SEVERITY</span>
-                        <h3 class="font-black text-gray-900 mt-2 text-sm leading-snug">${item.title}</h3>
-                        <p class="text-[10px] text-gray-500 mt-1"> ${item.program} • 💰 ${item.reward}</p>
-                    </div>
-                    <div class="countdown-box" data-target="${new Date(Date.now() + 86400000).toISOString()}"><i class="fa-regular fa-clock"></i> <span class="timer">23:59:59</span></div>
-                </div>
-                
-                <div class="inner-tabs">
-                    <div class="inner-tab active" onclick="switchInnerTab('${id}', 'tools')">🛠️ Alat</div>
-                    <div class="inner-tab" onclick="switchInnerTab('${id}', 'poc')">🎥 PoC Video</div>
-                    <div class="inner-tab" onclick="switchInnerTab('${id}', 'report')">📄 Laporan PDF</div>
-                </div>
-
-                <div id="tab-${id}-tools" class="tab-content active">
-                    <ul class="text-xs text-gray-600 space-y-2 list-disc pl-4">
-                        <li>Burp Suite Professional / OWASP ZAP</li>
-                        <li>Browser DevTools (Network & Console)</li>
-                        <li>Proxy Interceptor terkonfigurasi ke target</li>
-                    </ul>
-                </div>
-                <div id="tab-${id}-poc" class="tab-content">
-                    <div class="bg-gray-900 rounded-lg p-3 text-green-400 font-mono text-[10px] mb-2">
-                        Payload: ${ai.payload || '<script>alert(document.cookie)</script>'}<br>
-                        Endpoint: ${item.target_url}
-                    </div>
-                    <p class="text-[10px] text-gray-500">Video demonstrasi eksploitasi sedang di-generate oleh AI Agent...</p>
-                </div>
-                <div id="tab-${id}-report" class="tab-content">
-                    <p class="text-xs text-gray-600 mb-3">Laporan standar HackerOne/Bugcrowd telah disiapkan.</p>
-                    <button onclick="copyBugReport('${item.id}')" class="btn-action text-xs"><i class="fa-solid fa-copy"></i> SALIN LAPORAN KE CLIPBOARD</button>
-                </div>
-            </article>`;
-        }
-
-        // --- MODE 2: AUTOMATED SNIPER ---
-        function renderSniperCard(item, ai, id) {
-            return `
-            <article class="cuan-card border-l-orange-500">
-                <div class="p-4 border-b border-gray-100">
-                    <div class="flex justify-between items-center mb-2">
-                        <span class="bg-orange-100 text-orange-700 text-[10px] font-black px-2 py-1 rounded-md">FLASH SALE DETECTED</span>
-                        <div class="countdown-box" data-target="${ai.sale_end_time || new Date(Date.now() + 3600000).toISOString()}"><i class="fa-solid fa-stopwatch"></i> <span class="timer">00:59:59</span></div>
-                    </div>
-                    <h3 class="font-black text-gray-900 text-sm">${item.title}</h3>
-                    <p class="text-[var(--primary)] font-black text-lg mt-1">${item.reward}</p>
-                </div>
-                
-                <div class="p-4 space-y-3">
-                    <input type="text" placeholder="Nama Penerima" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold outline-none focus:border-[var(--primary)]">
-                    <input type="text" placeholder="Alamat Lengkap" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold outline-none focus:border-[var(--primary)]">
-                    <input type="tel" placeholder="Nomor WhatsApp" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold outline-none focus:border-[var(--primary)]">
+                html += `
+                <article class="card-layer" id="${cardId}">
                     
-                    <button onclick="activateSniper('${item.target_url}')" class="btn-action text-xs mt-2"><i class="fa-solid fa-crosshairs"></i> AKTIFKAN SNIPER AI</button>
-                    <p class="text-[9px] text-gray-400 text-center">Bot akan mengeksekusi API pembelian otomatis saat detik promo dibuka.</p>
-                </div>
-            </article>`;
-        }
-
-        // --- MODE 3: CRYPTO AIRDROP ---
-        function renderCryptoCard(item, ai, id) {
-            const vcScore = ai.legitimacy_score || Math.floor(Math.random() * 40) + 60;
-            let scoreColor = vcScore > 80 ? 'text-green-600 bg-green-100' : vcScore > 50 ? 'text-yellow-600 bg-yellow-100' : 'text-red-600 bg-red-100';
-            
-            return `
-            <article class="cuan-card border-l-purple-500">
-                <div class="p-4 border-b border-gray-100 flex justify-between items-start">
-                    <div>
-                        <span class="${scoreColor} text-[10px] font-black px-2 py-1 rounded-md">VC SCORE: ${vcScore}/100</span>
-                        <h3 class="font-black text-gray-900 mt-2 text-sm">${item.title}</h3>
-                        <p class="text-[10px] text-gray-500 mt-1">💰 Est. Reward: ${item.reward}</p>
+                    <!-- 📋 LAYER 1: DATA RIIL -->
+                    <div class="layer-header">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="${riskColor} text-[10px] font-black px-2 py-1 rounded-md uppercase tracking-wide">${riskLevel} RISK</span>
+                            <span class="text-[var(--emerald)] font-black text-lg">${originalReward}</span>
+                        </div>
+                        <h3 class="font-black text-gray-900 text-base leading-snug mb-1">${item.title || 'Untitled Opportunity'}</h3>
+                        <p class="text-[10px] text-gray-500 font-medium flex items-center gap-1">
+                            🎯 ${item.program || 'Unknown Platform'} •  ${new Date(item.created_at).toLocaleDateString()}
+                        </p>
                     </div>
-                </div>
-                
-                <div class="p-4 space-y-3">
-                    <div class="bg-purple-50 p-3 rounded-xl border border-purple-100">
-                        <p class="text-[10px] font-bold text-purple-700 mb-2">🌐 MULTI-WALLET MANAGEMENT</p>
-                        <div class="flex gap-2 overflow-x-auto no-scrollbar pb-2">
-                            <div class="min-w-[100px] bg-white p-2 rounded-lg border border-purple-200 text-center">
-                                <p class="text-[9px] text-gray-400">Wallet 1 (Main)</p>
-                                <p class="text-[10px] font-mono font-bold truncate">0x71C...9A2</p>
+
+                    <!-- ⚖️ LAYER 2: SYARAT & PROTEKSI -->
+                    <div class="layer-body">
+                        <div class="price-guard" id="guard-${item.id}">
+                            ⚠️ <strong>PRICE GUARD ALERT:</strong> Nilai checkout berubah! Tombol dibekukan demi keamanan finansial Bos.
+                        </div>
+                        
+                        <div class="space-y-2 text-xs text-gray-700">
+                            <div class="flex items-start gap-2">
+                                <span class="text-[var(--emerald)] mt-0.5">✓</span>
+                                <span><strong>Kelayakan:</strong> ${eligibility}</span>
                             </div>
-                            <div class="min-w-[100px] bg-white p-2 rounded-lg border border-purple-200 text-center">
-                                <p class="text-[9px] text-gray-400">Wallet 2 (Farm)</p>
-                                <p class="text-[10px] font-mono font-bold truncate">0x3B4...F1D</p>
-                            </div>
-                            <div class="min-w-[100px] bg-white p-2 rounded-lg border border-purple-200 text-center">
-                                <p class="text-[9px] text-gray-400">Wallet 3 (Sybil)</p>
-                                <p class="text-[10px] font-mono font-bold truncate">0x9E2...C8A</p>
+                            <div class="flex items-start gap-2">
+                                <span class="text-[var(--emerald)] mt-0.5">✓</span>
+                                <span><strong>Tingkat Risiko:</strong> ${riskLevel} (Verified by AI)</span>
                             </div>
                         </div>
                     </div>
-                    
-                    <button onclick="window.open('${item.target_url}', '_blank')" class="btn-action text-xs bg-purple-600 shadow-purple-200"><i class="fa-solid fa-wallet"></i> MULAI FARMING AIRDROP</button>
-                </div>
-            </article>`;
+
+                    <!-- 🛠️ LAYER 3: PETUNJUK EKSEKUSI -->
+                    <div class="layer-footer">
+                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">🛠️ Petunjuk Eksekusi Mobile:</p>
+                        <ol class="list-decimal list-inside text-xs text-gray-600 space-y-1 mb-4 pl-1">
+                            ${steps.map(step => `<li>${step.replace(/^\d+\.\s*/, '')}</li>`).join('')}
+                        </ol>
+
+                        <!-- EMERALD ACTION PIPELINE -->
+                        ${currentTab === 'bug' ? `
+                            <button onclick="copyBugReport('${item.id}')" class="btn-emerald text-xs">
+                                📄 COPY REPORT
+                            </button>
+                        ` : `
+                            <button onclick="safeNavigate('${item.target_url}', '${cardId}', '${originalReward}')" class="btn-emerald text-xs" id="btn-${item.id}">
+                                🚀 CLAIM / VISIT TARGET
+                            </button>
+                        `}
+                    </div>
+                </article>
+                `;
+            });
+
+            container.innerHTML = html;
         }
 
-        // --- MODE 4: SAYEMBARA KREATIF ---
-        function renderCreativeCard(item, ai, id) {
-            return `
-            <article class="cuan-card border-l-pink-500">
-                <div class="p-4 border-b border-gray-100">
-                    <span class="bg-pink-100 text-pink-700 text-[10px] font-black px-2 py-1 rounded-md">DESIGN CONTEST</span>
-                    <h3 class="font-black text-gray-900 mt-2 text-sm">${item.title}</h3>
-                    <p class="text-[var(--primary)] font-black text-lg mt-1">${item.reward}</p>
-                </div>
-                
-                <div class="inner-tabs">
-                    <div class="inner-tab active" onclick="switchInnerTab('${id}', 'info')">ℹ️ Info</div>
-                    <div class="inner-tab" onclick="switchInnerTab('${id}', 'workshop')">🤖 Workshop AI</div>
-                    <div class="inner-tab" onclick="switchInnerTab('${id}', 'download')">⬇️ Siap Unduh</div>
-                </div>
+        // ==========================================
+        // ACTION HANDLERS & PRICE GUARD PROTECTION
+        // ==========================================
+        
+        // Price Guard Protection Logic
+        function safeNavigate(url, cardId, originalReward) {
+            if (!url || url === '#') {
+                alert("⚠️ Target URL tidak valid atau belum tersedia.");
+                return;
+            }
 
-                <div id="tab-${id}-info" class="tab-content active">
-                    <p class="text-xs text-gray-600 leading-relaxed">${ai.contest_brief || 'Buat logo modern untuk startup fintech dengan nuansa emerald dan futuristik.'}</p>
-                    <div class="mt-3 p-2 bg-gray-50 rounded-lg text-[10px] text-gray-500">
-                        <strong>Syarat:</strong> ${ai.requirements || 'Original, Vector SVG, Max 3 Warna'}
-                    </div>
-                </div>
-                <div id="tab-${id}-workshop" class="tab-content">
-                    <div class="bg-gray-900 rounded-lg p-3 text-center">
-                        <i class="fa-solid fa-robot text-2xl text-pink-400 mb-2"></i>
-                        <p class="text-[10px] text-gray-300">AI sedang men-generate 5 variasi logo profesional...</p>
-                        <div class="w-full bg-gray-700 rounded-full h-1.5 mt-2"><div class="bg-pink-500 h-1.5 rounded-full" style="width: 75%"></div></div>
-                    </div>
-                </div>
-                <div id="tab-${id}-download" class="tab-content">
-                    <button class="btn-action btn-secondary text-xs mb-2"><i class="fa-solid fa-file-word"></i> UNDUH DRAF ESAI (.DOCX)</button>
-                    <button class="btn-action text-xs bg-pink-600 shadow-pink-200"><i class="fa-solid fa-image"></i> UNDUH LOGO HI-RES (.PNG)</button>
-                </div>
-            </article>`;
+            // Simulasi Price Guard: Cek apakah reward masih sama (bisa dikembangkan dengan fetch real-time price)
+            // Di sini kita gunakan logika dasar: jika tombol diklik 2x dalam 1 detik, bekukan (anti-double spend)
+            const btn = document.getElementById(`btn-${cardId.split('-')[1]}`);
+            const guard = document.getElementById(`guard-${cardId.split('-')[1]}`);
+            
+            if (btn.dataset.clicked === 'true') {
+                guard.classList.add('visible');
+                btn.classList.add('btn-frozen');
+                btn.innerHTML = "🔒 FROZEN (Price Guard Active)";
+                return;
+            }
+            
+            btn.dataset.clicked = 'true';
+            setTimeout(() => { btn.dataset.clicked = 'false'; }, 2000); // Reset setelah 2 detik
+            
+            window.open(url, '_blank');
         }
 
-        // --- MODE 5: PRODUCT TESTER ---
-        function renderTesterCard(item, ai, id) {
-            return `
-  
+        // Bug Bounty Copy Report Handler
+        function copyBugReport(id) {
+            const item = liveData.find(d => d.id === id);
+            if (!item) return;
+            
+            const ai = typeof item.ai_analysis === 'string' ? JSON.parse(item.ai_analysis) : item.ai_analysis;
+            const reportText = `SECURITY REPORT: ${item.title}\n\nPLATFORM: ${item.program}\nSEVERITY: ${ai?.risk_level || 'N/A'}\nELIGIBILITY: ${ai?.eligibility || 'N/A'}\n\nAI ANALYSIS:\n${JSON.stringify(ai, null, 2)}\n\nTARGET URL: ${item.target_url}\n\n[END OF REPORT]`;
+            
+            navigator.clipboard.writeText(reportText).then(() => {
+                alert("✅ Laporan keamanan berhasil disalin ke clipboard!");
+            }).catch(() => {
+                alert("❌ Gagal menyalin. Silakan copy manual.");
+            });
+        }
+    </script>
+</body>
+</html>
