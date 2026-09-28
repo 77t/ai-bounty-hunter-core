@@ -3,214 +3,145 @@ import json
 import time
 import random
 import requests
+import httpx
 from bs4 import BeautifulSoup
-from supabase import create_client, Client
 from datetime import datetime, timezone
+from dotenv import load_dotenv
+
+# Load environment variables dari file .env
+load_dotenv()
 
 # ==========================================
-# KONFIGURASI SUPABASE (FLEXIBLE KEY NAME)
+# KONFIGURASI SUPABASE (VIA REST API - ANDROID SAFE)
 # ==========================================
 SUPABASE_URL = os.getenv("SUPABASE_URL", "https://xnpxiddpfqolfqchtadw.supabase.co")
-
-# Coba ambil dari berbagai kemungkinan nama env var agar tidak crash
-SUPABASE_KEY = (
-    os.getenv("SUPABASE_SERVICE_ROLE_KEY") or 
-    os.getenv("SUPABASE_SERVICE_KEY") or 
-    os.getenv("SUPABASE_KEY")
-)
+SUPABASE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
 
 if not SUPABASE_KEY:
-    print("⚠️ PERINGATAN: Supabase Key tidak ditemukan di Environment Variables.")
-    print("   Pastikan set SUPABASE_SERVICE_ROLE_KEY di GitHub Secrets / Vercel Env Vars.")
-    # Jangan raise error dulu biar bisa test logic scraping-nya
-    supabase = None
-else:
-    supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
-    print("✅ Supabase Client Initialized Successfully.")
+    print("️ PERINGATAN: SUPABASE_SERVICE_ROLE_KEY tidak ditemukan di .env!")
+    exit(1)
+
+# Headers khusus untuk Supabase REST API
+HEADERS = {
+    "apikey": SUPABASE_KEY,
+    "Authorization": f"Bearer {SUPABASE_KEY}",
+    "Content-Type": "application/json",
+    "Prefer": "resolution=merge-duplicates" 
+}
 
 # ==========================================
 # HEADERS & ANTI-BOT CONFIGURATION
 # ==========================================
-HEADERS_LIST = [
-    {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'},
-    {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15'},
-    {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:120.0) Gecko/20100101 Firefox/120.0'}
+USER_AGENTS = [
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15',
+    'Mozilla/5.0 (X11; Linux x86_64; rv:120.0) Gecko/20100101 Firefox/120.0'
 ]
 
-SCAM_KEYWORDS = ["guaranteed profit", "send crypto first", "private key needed", "unlimited money"]
+SCAM_KEYWORDS = ["guaranteed profit", "send crypto first", "private key needed"]
 
 def get_random_headers():
-    return random.choice(HEADERS_LIST)
+    return {'User-Agent': random.choice(USER_AGENTS)}
 
 # ==========================================
-# AI ANALYSIS ENGINE (REAL-TIME)
+# AI ANALYSIS ENGINE
 # ==========================================
 def analyze_real_data(title, desc, reward, category):
     text = f"{title} {desc}".lower()
-    
-    # Risk Assessment Logic
     risk = "Low"
-    if any(k in text for k in ["beta", "testnet", "new", "unaudited"]): risk = "Medium"
-    if any(k in text for k in ["anonymous", "high yield", "ponzi", "rug"]): risk = "High"
+    if any(k in text for k in ["beta", "testnet", "new"]): risk = "Medium"
+    if any(k in text for k in ["anonymous", "high yield"]): risk = "High"
     
-    # Eligibility Detection
     elig = "Open to All"
     if "whitelist" in text: elig = "Whitelist Only"
     if "kyc" in text: elig = "KYC Required"
     
-    # Dynamic Step-by-Step Guide Generator
-    steps = []
-    if category == "Bug Bounty":
-        steps = ["1. Review scope & policy carefully.", "2. Perform recon on target domain.", "3. Test for OWASP Top 10 vulns.", "4. Create reproducible PoC.", "5. Submit via official platform."]
-    elif category == "Crypto Airdrop":
-        steps = ["1. Connect Web3 Wallet (MetaMask).", "2. Complete on-chain tasks (Bridge/Swap).", "3. Join Discord & verify role.", "4. Fill GalZe/Testnet form.", "5. Keep TX hashes as proof."]
-    elif category == "Flash Sale":
-        steps = ["1. Add to cart 5 mins before start.", "2. Pre-fill shipping address.", "3. Use auto-clicker at T-0.", "4. Checkout immediately.", "5. Screenshot payment proof."]
-    else:
-        steps = ["1. Visit target URL.", "2. Read full terms.", "3. Complete required actions.", "4. Submit entry.", "5. Save confirmation."]
-
+    steps = ["1. Visit target URL.", "2. Read terms.", "3. Complete actions.", "4. Submit entry."]
+    if category == "Bug Bounty": steps = ["1. Review scope.", "2. Perform recon.", "3. Find vuln.", "4. Write PoC.", "5. Submit report."]
+    elif category == "Crypto Airdrop": steps = ["1. Connect wallet.", "2. Do on-chain tasks.", "3. Join Discord.", "4. Fill form."]
+    
     return {
-        "risk_level": risk,
-        "eligibility": elig,
-        "step_by_step_guide": steps,
+        "risk_level": risk, "eligibility": elig, "step_by_step_guide": steps,
         "is_scam": any(k in text for k in SCAM_KEYWORDS),
         "analyzed_at": datetime.now(timezone.utc).isoformat()
     }
 
 # ==========================================
-# REAL SCRAPING MODULES (STANDALONE)
+# FUNGSI INSERT KE SUPABASE (VIA HTTPX - TANPA LIBRARY SUPABASE)
 # ==========================================
-
-def scrape_airdrop_alert():
-    """Scrape real data from AirdropAlert.com"""
-    print("🕷️ Scraping AirdropAlert...")
-    url = "https://airdropalert.com/latest"
+def save_to_supabase(item):
+    """Insert data ke table 'bounties' via REST API langsung"""
+    url = f"{SUPABASE_URL}/rest/v1/bounties"
     try:
-        resp = requests.get(url, headers=get_random_headers(), timeout=15)
-        resp.raise_for_status()
+        response = httpx.post(url, headers=HEADERS, json=item, timeout=10)
+        if response.status_code in [200, 201, 204]:
+            print(f"✅ Saved: {item['title']}")
+            return True
+        else:
+            print(f" Error {response.status_code}: {response.text[:100]}")
+            return False
+    except Exception as e:
+        print(f"❌ Connection Error: {e}")
+        return False
+
+# ==========================================
+# SCRAPING MODULES
+# ==========================================
+def scrape_airdrop_alert():
+    print("️ Scraping AirdropAlert...")
+    try:
+        resp = requests.get("https://airdropalert.com/latest", headers=get_random_headers(), timeout=15)
         soup = BeautifulSoup(resp.text, 'html.parser')
-        
         items = []
-        # Selector spesifik untuk AirdropAlert
-        cards = soup.select('div.airdrop-card, article.post-item, .list-group-item') 
-        
-        for card in cards[:10]: 
+        # Selector mungkin perlu disesuaikan jika situs update struktur
+        for card in soup.select('div.airdrop-card, article.post-item, .list-group-item')[:5]:
             title_el = card.select_one('h3, h4, .title')
             link_el = card.select_one('a[href*="airdrop"]')
-            reward_el = card.select_one('.reward, .prize, span.badge')
-            
             if title_el and link_el:
                 title = title_el.get_text(strip=True)
                 link = link_el['href']
                 if not link.startswith('http'): link = f"https://airdropalert.com{link}"
-                
-                reward = reward_el.get_text(strip=True) if reward_el else "TBA"
-                desc = card.get_text(strip=True)[:300]
-                
-                analysis = analyze_real_data(title, desc, reward, "Crypto Airdrop")
+                analysis = analyze_real_data(title, "", "TBA", "Crypto Airdrop")
                 if not analysis["is_scam"]:
                     items.append({
-                        "title": title,
-                        "program": "AirdropAlert",
-                        "reward": reward,
-                        "target_url": link,
-                        "category": "Crypto Airdrop",
-                        "description": desc,
-                        "ai_analysis": analysis
+                        "title": title, "program": "AirdropAlert", "reward": "TBA", 
+                        "target_url": link, "category": "Crypto Airdrop", 
+                        "description": "", "ai_analysis": analysis
                     })
         return items
     except Exception as e:
         print(f"❌ AirdropAlert Error: {e}")
         return []
 
-def scrape_hackerone_public():
-    """Scrape public bug bounty programs - Fallback Safe Mode"""
-    print("🕷️ Scraping HackerOne Directory (Safe Mode)...")
-    # Karena H1 sangat protektif, kita gunakan data validasi manual sebagai fallback
-    # Ini menjamin Bos selalu punya minimal 1 data Bug Bounty real
+def scrape_hackerone_fallback():
+    """Fallback data Bug Bounty valid karena H1 sering block scraper"""
     return [{
-        "title": "Stripe Security Bug Bounty",
-        "program": "HackerOne",
-        "reward": "$150,000 Max",
-        "target_url": "https://hackerone.com/stripe",
-        "category": "Bug Bounty",
-        "description": "Official Stripe security program. Focus on payment gateway RCE and account takeover.",
-        "ai_analysis": analyze_real_data("Stripe RCE", "Payment gateway vulnerability", "$150k", "Bug Bounty")
+        "title": "Stripe Security Bug Bounty", "program": "HackerOne", "reward": "$150,000 Max",
+        "target_url": "https://hackerone.com/stripe", "category": "Bug Bounty",
+        "description": "Official Stripe security program. Focus on payment gateway RCE.",
+        "ai_analysis": analyze_real_data("Stripe RCE", "Payment gateway vuln", "$150k", "Bug Bounty")
     }]
 
-def scrape_tokopedia_flashsale():
-    """Scrape Flash Sale dari Tokopedia"""
-    print("️ Scraping Tokopedia Flash Sale...")
-    url = "https://www.tokopedia.com/discovery/flash-sale"
-    try:
-        resp = requests.get(url, headers=get_random_headers(), timeout=15)
-        resp.raise_for_status()
-        soup = BeautifulSoup(resp.text, 'html.parser')
-        
-        items = []
-        products = soup.select('.css-1c94d8i, .product-card, .flash-sale-item')
-        
-        for prod in products[:5]:
-            title_el = prod.select_one('h3, .name, .product-title')
-            price_el = prod.select_one('.price, .discount-price')
-            link_el = prod.select_one('a')
-            
-            if title_el and link_el:
-                title = title_el.get_text(strip=True)
-                price = price_el.get_text(strip=True) if price_el else "Diskon Besar"
-                link = link_el['href']
-                if not link.startswith('http'): link = f"https://www.tokopedia.com{link}"
-                
-                analysis = analyze_real_data(title, f"Flash sale item: {price}", price, "Flash Sale")
-                
-                items.append({
-                    "title": title,
-                    "program": "Tokopedia",
-                    "reward": price,
-                    "target_url": link,
-                    "category": "Flash Sale",
-                    "description": f"Real-time flash sale detected: {title}",
-                    "ai_analysis": analysis
-                })
-        return items
-    except Exception as e:
-        print(f"❌ Tokopedia Error: {e}")
-        return []
-
 # ==========================================
-# MAIN EXECUTION PIPELINE
+# MAIN EXECUTION
 # ==========================================
 def main():
-    print("🚀 TEGUH HUNTER REAL SCANNER STARTED...")
+    print("🚀 TEGUH HUNTER ANDROID SCANNER STARTED...")
     all_items = []
     
-    # Jalankan semua scraper
+    # Jalankan scraping
     all_items.extend(scrape_airdrop_alert())
-    all_items.extend(scrape_hackerone_public())
-    all_items.extend(scrape_tokopedia_flashsale())
+    all_items.extend(scrape_hackerone_fallback())
     
     print(f"📦 Total items collected: {len(all_items)}")
     
-    # Stream ke Supabase (Jika client tersedia)
-    if supabase:
-        success_count = 0
-        for item in all_items:
-            try:
-                # Upsert berdasarkan target_url untuk menghindari duplikat
-                result = supabase.table("bounties").upsert(
-                    item,
-                    on_conflict="target_url"
-                ).execute()
-                success_count += 1
-                print(f"✅ Saved: {item['title']}")
-            except Exception as e:
-                print(f"❌ DB Error for {item['title']}: {e}")
-                
-        print(f"✨ DONE. {success_count}/{len(all_items)} items saved to Supabase.")
-    else:
-        print("️ Supabase client tidak aktif. Data hanya ditampilkan di console.")
-        for item in all_items:
-            print(json.dumps(item, indent=2))
+    # Simpan ke Supabase satu per satu
+    success_count = 0
+    for item in all_items:
+        if save_to_supabase(item):
+            success_count += 1
+            
+    print(f"✨ DONE. {success_count}/{len(all_items)} items saved to Supabase.")
 
 if __name__ == "__main__":
     main()
